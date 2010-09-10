@@ -29,6 +29,8 @@ class Task implements Runnable{
     public Task(TCPSocket socket, ParallelServer ps){
         this.socket  = socket;
         this.ps      = ps;
+        AliveTask at = new AliveTask(this.socket, this.ps);
+        new Thread(at).start();
     }
 
     /**
@@ -104,6 +106,58 @@ class Task implements Runnable{
         return this.nick;
     }
 }
+
+
+
+/**
+ * This class is for handling the Clients. For each connected client there is
+ * a Task object for storing the socket,nick etc.
+ *
+ * @author Yannic Schneider
+ */
+class AliveTask implements Runnable{
+    
+    private TCPSocket       socket;
+    private ParallelServer  ps;
+    private String          nick;
+
+    /**
+     * Constructor
+     *
+     * @param socket    the socket from the client
+     * @param ps        the Server-instance
+     */
+    public AliveTask(TCPSocket socket, ParallelServer ps){
+        this.socket  = socket;
+        this.ps      = ps;
+    }
+
+    /**
+     * send Alive signal all x seconds
+     *
+     */
+    public void run(){
+        try{
+            System.out.println("[*] connected AliveTask");
+
+            for(int i = 0; i < 10; i++){
+            	socket.sendLine("ALIVE: " + i );
+            	Thread.sleep(1000);
+            }
+           
+        } catch(Exception e) {
+            System.out.println(e);
+        }
+
+        try{
+            socket.close();
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+}
+
+
 
 /**
  * This class is for monitoring the thread-pool and waiting for incoming
