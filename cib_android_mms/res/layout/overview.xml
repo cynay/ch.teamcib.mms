@@ -11,6 +11,7 @@
         	android:id="@+id/btn_status"
         	android:layout_width="24px"
 			android:layout_height="24px"
+			android:background="@android:drawable/ic_input_add"
 			android:gravity="right"
             android:padding="3dip" />
         <ImageButton
