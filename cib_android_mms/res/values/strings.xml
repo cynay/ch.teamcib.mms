@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Meow! ...</string>
-    <string name="app_name">book1</string>
+    <string name="hello">teamcib</string>
+    <string name="app_name">MMS</string>
+    
+    <!-- TextView-Texts -->
+    <string name="txt_mainTitle">Choose your option:</string>
+    <string name="txt_typePassword">Type in your:</string>
+    
+    <!-- Button-texts -->
+	<string name="btn_newFile">New File</string>
+ 	<string name="btn_openFile">Open File</string>
+ 	<string name="btn_cancel">Cancel</string>
+ 	<string name="btn_save">Save</string>
+ 	
+ 	<!-- Menu-texts -->
+ 	<string name="men_add">Add</string>
+	<string name="men_editSettings">Settings</string>
+ 	<string name="men_help">Help</string>
+ 	<string name="men_exit">Exit</string>
+    
 </resources>

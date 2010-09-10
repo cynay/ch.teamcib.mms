@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <item 
+    android:id="@+id/opt_add"
+    android:title="@string/men_add"
+    android:icon="@android:drawable/ic_menu_add"
+  />
+  <item
+    android:id="@+id/opt_editSettings"
+    android:title="@string/men_editSettings"
+    android:icon="@android:drawable/ic_menu_preferences"
+  />
+  <item
+    android:id="@+id/opt_help"
+    android:title="@string/men_help"
+    android:icon="@android:drawable/ic_menu_help"
+  />
+  <item
+    android:id="@+id/opt_exit"
+    android:title="@string/men_exit"
+    android:icon="@android:drawable/ic_menu_close_clear_cancel"
+  />
+</menu>

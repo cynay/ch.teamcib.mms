@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:stretchColumns="0">
+    <TableRow>
+        <TextView
+            android:text="server 1"
+            android:padding="3dip" />
+        <ImageButton
+        	android:id="@+id/btn_status"
+        	android:layout_width="24px"
+			android:layout_height="24px"
+			android:gravity="right"
+            android:padding="3dip" />
+        <ImageButton
+        	android:id="@+id/btn_edit"
+        	android:layout_width="24px"
+			android:layout_height="24px"
+			android:gravity="right"
+            android:padding="3dip" />
+        <ImageButton
+        	android:id="@+id/btn_delete"
+        	android:layout_width="24px"
+			android:layout_height="24px"
+			android:gravity="right"
+            android:padding="3dip" />
+        	
+    </TableRow>
+    
+    <TableRow>
+        <TextView
+            android:text="server 2"
+            android:padding="3dip" />
+        <ImageButton
+        	android:id="@+id/btn_status"
+        	android:layout_width="24px"
+			android:layout_height="24px"
+			android:gravity="right"
+            android:padding="3dip" />
+        <ImageButton
+        	android:id="@+id/btn_edit"
+        	android:layout_width="24px"
+			android:layout_height="24px"
+			android:gravity="right"
+            android:padding="3dip" />
+        <ImageButton
+        	android:id="@+id/btn_delete"
+        	android:layout_width="24px"
+			android:layout_height="24px"
+			android:gravity="right"
+            android:padding="3dip" />
+        	
+    </TableRow>
+
+</TableLayout>
