@@ -1,4 +1,4 @@
-package ch.teamcib.mms.network;
+package ch.teamcib.mms.server;
 
 
 import java.io.*;

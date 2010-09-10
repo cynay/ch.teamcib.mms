@@ -5,8 +5,6 @@ import java.net.*;
 import java.util.concurrent.*;
 import java.util.*;
 
-import ch.teamcib.mms.network.TCPSocket;
-
 
 /**
  * This class is for handling the Clients. For each connected client there is
