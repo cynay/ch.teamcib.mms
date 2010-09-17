@@ -169,6 +169,7 @@ public class ParallelServer {
     private final int  MAX_POOL_SIZE   = 8;
     private final long KEEP_ALIVE_TIME = 10;
 
+
     private List<Task> clients = new ArrayList<Task>();
     private HashSet<String> clientNames = new HashSet<String>();
 
@@ -179,8 +180,16 @@ public class ParallelServer {
      * @param args
      */
     public static void main(String[] args){
+    	GUI.main(null);
+    	try {
+			Thread.sleep(500); // So the GUI has time to initialize (If not done the first output goes to the console not the gui)
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         new ParallelServer().execute();
     }
+
 
     /**
      * Method for sending new messages to all the clients
