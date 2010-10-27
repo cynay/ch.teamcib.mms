@@ -1,4 +1,4 @@
-package ch.teamcib.mms;
+package ch.teamcib.mms.gui;
 
 import android.app.Activity;
 import android.content.Context;

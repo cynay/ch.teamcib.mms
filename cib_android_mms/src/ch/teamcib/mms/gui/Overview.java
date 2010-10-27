@@ -1,8 +1,11 @@
-package ch.teamcib.mms;
+package ch.teamcib.mms.gui;
 
 import java.io.IOException;
 
 import ch.teamcib.mms.*;
+import ch.teamcib.mms.R.id;
+import ch.teamcib.mms.R.layout;
+import ch.teamcib.mms.R.menu;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

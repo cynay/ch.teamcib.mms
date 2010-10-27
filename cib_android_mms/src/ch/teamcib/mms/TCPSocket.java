@@ -1,13 +1,16 @@
 package ch.teamcib.mms;
 
-
 import java.io.*;
 import java.net.*;
 
 /**
- * 
- *
- * @author cYnaY
+ * Project: ch.teamcib.mms
+ * $Header: $
+ * Author:  Yannic Schneider
+ * Last Change: 
+ *    by:   $Author: $
+ *    date: $Date:   $
+ * Copyright (c): Team-CIB, 2010
  */
 public class TCPSocket {
 
