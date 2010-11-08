@@ -3,19 +3,14 @@ package ch.teamcib.mms.gui;
 import java.io.IOException;
 
 import ch.teamcib.mms.*;
-import ch.teamcib.mms.R.id;
-import ch.teamcib.mms.R.layout;
-import ch.teamcib.mms.R.menu;
+import ch.teamcib.mms.R.*;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
-import android.widget.RadioGroup;
-import android.widget.Spinner;
-import android.widget.Toast;
+import android.widget.*;
 
 /**
  * @author 
@@ -59,7 +54,7 @@ public class Overview extends Activity {
 		case R.id.opt_add:
 			return true;
 		case R.id.opt_editSettings:
-			startActivity(new Intent(this, EditSettings.class));
+			startActivity(new Intent(this, Preferences.class));
 			return true;
 		case R.id.opt_help:
 			startActivity(new Intent(this, ShowHelp.class));

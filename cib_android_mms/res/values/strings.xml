@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="hello">teamcib</string>
-    <string name="app_name">MMS</string>
+    <string name="app_name">Mobile Monitoring Service</string>
     
     <!-- TextView-Texts -->
     <string name="txt_mainTitle">Choose your option:</string>

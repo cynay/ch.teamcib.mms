@@ -9,23 +9,37 @@
     	android:theme="@android:style/Theme.Light" android:debuggable="true">
     	
     	<!-- Activities -->
-        <activity android:name=".Overview"
+        <activity android:name=".gui.Overview"
                   android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ServerConfig" />
-        <activity android:name=".ShowHelp" />
-        <activity android:name=".EditSettings" />
+        <activity android:name=".gui.ServerConfig" />
+        <activity android:name=".gui.ShowHelp" />
+        <activity android:name=".gui.EditSettings" />
+        <activity android:name=".gui.Preferences"
+                  android:label="@string/app_name" />
+        
+        <!-- Services -->
+        <service android:name=".service.NetworkServiceImpl"
+        		 android:process=":MyNetworkService" />
 
     </application>
     <uses-sdk android:minSdkVersion="7" />
     
     
-    <!-- Permissions for the application -->
+    <!-- PERMISSIONS -->
+    <!-- Permissions for Data-handling -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    
+    <!-- Permissions for Network-communication/Internet -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    
+    <!-- Permissions for other stuff -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
 
 </manifest> 

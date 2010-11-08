@@ -9,22 +9,22 @@
             android:padding="3dip" />
         <ImageButton
         	android:id="@+id/btn_status"
-        	android:layout_width="36px"
-			android:layout_height="36px"
+        	android:layout_width="24px"
+			android:layout_height="24px"
 			android:background="@drawable/emo_im_cool"
 			android:gravity="right"
             android:padding="3dip" />
         <ImageButton
         	android:id="@+id/btn_edit"
-        	android:layout_width="36px"
-			android:layout_height="36px"
+        	android:layout_width="24px"
+			android:layout_height="24px"
 			android:background="@android:drawable/ic_menu_manage"
 			android:gravity="right"
             android:padding="3dip" />
         <ImageButton
         	android:id="@+id/btn_delete"
-        	android:layout_width="36px"
-			android:layout_height="36px"
+        	android:layout_width="24px"
+			android:layout_height="24px"
 			android:background="@android:drawable/ic_menu_delete"
 			android:gravity="right"
             android:padding="3dip" />
@@ -37,22 +37,22 @@
             android:padding="3dip" />
         <ImageButton
         	android:id="@+id/btn_status"
-        	android:layout_width="36px"
-			android:layout_height="36px"
+        	android:layout_width="24px"
+			android:layout_height="24px"
 			android:background="@drawable/emo_im_crying"
 			android:gravity="right"
             android:padding="3dip" />
         <ImageButton
         	android:id="@+id/btn_edit"
-        	android:layout_width="36px"
-			android:layout_height="36px"
+        	android:layout_width="24px"
+			android:layout_height="24px"
 			android:background="@android:drawable/ic_menu_manage"
 			android:gravity="right"
             android:padding="3dip" />
         <ImageButton
         	android:id="@+id/btn_delete"
-        	android:layout_width="36px"
-			android:layout_height="36px"
+        	android:layout_width="24px"
+			android:layout_height="24px"
 			android:background="@android:drawable/ic_menu_delete"
 			android:gravity="right"
             android:padding="3dip" />
