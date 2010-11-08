@@ -8,7 +8,7 @@ import java.util.*;
 
 /**
  * This class is for handling the Clients. For each connected client there is
- * a Task object for storing the socket,nick etc.
+ * a Task object for storing the socket etc.
  *
  * @author Yannic Schneider
  */
@@ -108,8 +108,7 @@ class Task implements Runnable{
 
 
 /**
- * This class is for handling the Clients. For each connected client there is
- * a Task object for storing the socket,nick etc.
+ * 
  *
  * @author Yannic Schneider
  */
