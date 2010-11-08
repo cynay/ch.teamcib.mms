@@ -3,6 +3,7 @@ package ch.teamcib.mms.service;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.widget.Toast;
 
 
@@ -19,7 +20,7 @@ public class NetworkServiceImpl extends Service {
 	@Override
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
-		return null;
+		return networkService;
 	}
 
 	
@@ -47,5 +48,27 @@ public class NetworkServiceImpl extends Service {
 	private void stopService() {
 		Toast.makeText(this, "Service stopped", Toast.LENGTH_LONG).show();
 	}
+	
+	private INetworkService.Stub networkService = new INetworkService.Stub() {
+		
+		
+		@Override
+		public boolean stopService() throws RemoteException {
+			// TODO Auto-generated method stub
+			return false;
+		}
+		
+		@Override
+		public boolean startService() throws RemoteException {
+			// TODO Auto-generated method stub
+			return false;
+		}
+		
+		@Override
+		public String getData() throws RemoteException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+	};
 
 }
