@@ -41,16 +41,38 @@ public class NetworkServiceImpl extends Service {
 		public String getData() throws RemoteException {
 			// TODO Auto-generated method stub
 			return Integer.toString(mTEST);
+		}
+
+		@Override
+		public void startService() throws RemoteException {
+			// TODO Auto-generated method stub
+			start();
+		}
+
+		@Override
+		public void stopService() throws RemoteException {
+			// TODO Auto-generated method stub
+			stop();
 		}		
 	};
+	
+	private void start(){
+		Log.i("-> REMOTE SERVICE", "start()");
+		mServiceHandler = new Handler();
+		mServiceHandler.postDelayed(mTask, 4000L);
+	}
+	
+	private void stop(){
+		Log.i("-> REMOTE SERVICE", "stop()");
+		android.os.Process.killProcess(android.os.Process.myPid());
+	}
 
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		Log.i("-> REMOTE SERVICE", "onCreate()");
-		mServiceHandler = new Handler();
-		mServiceHandler.postDelayed(mTask, 5000L);
+		
 		// init the service here
 		//startService();
 
@@ -60,7 +82,6 @@ public class NetworkServiceImpl extends Service {
 	public void onDestroy() {
 		super.onDestroy();
 		Log.i("-> REMOTE SERVICE", "onDestroy()");
-		android.os.Process.killProcess(android.os.Process.myPid());
 		//stopService();
 
 	}
@@ -108,7 +129,7 @@ public class NetworkServiceImpl extends Service {
 				mSocket = new TCPSocket(mHost,mPort);
 
 				++mTEST;
-				mServiceHandler.postDelayed(this,5000L);
+				mServiceHandler.postDelayed(this,4000L);
 				Log.i("-> REMOTE SERVICE", "Task class ");
 //				String msg = mSocket.receiveLine();
 //				if (msg != null){

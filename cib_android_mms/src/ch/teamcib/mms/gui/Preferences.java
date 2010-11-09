@@ -97,6 +97,7 @@ implements OnSharedPreferenceChangeListener {
 	
 	private void startService(){
 		try {
+			mService.startService();
 			Toast.makeText(this, mService.getData(), Toast.LENGTH_SHORT).show();
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
@@ -116,6 +117,7 @@ implements OnSharedPreferenceChangeListener {
 	
 	private void stopService(){
 		try {
+			mService.stopService();
 			Toast.makeText(this, mService.getData(), Toast.LENGTH_SHORT).show();
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
