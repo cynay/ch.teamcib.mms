@@ -1,22 +1,25 @@
 package ch.teamcib.mms.gui;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.preference.CheckBoxPreference;
 import android.preference.PreferenceActivity;
 import android.util.Log;
 import android.widget.Toast;
 import ch.teamcib.mms.*;
 import ch.teamcib.mms.service.INetworkService;
+import ch.teamcib.mms.service.NetworkServiceImpl;
 
 /**
- * This is the class for the Preferences. It handles all everything on the 
- * Prefscreen...
+ * This is the class for the Preferences. It handles everything on the 
+ * Preferencesscreen ...
  * 
  * @author Yannic Schneider
  * URL: http://stackoverflow.com/questions/531427/how-do-i-display-the-current-value-of-an-android-preference-in-the-preference-sum
@@ -26,7 +29,7 @@ implements OnSharedPreferenceChangeListener {
 
 	public static final String KEY_CKB_STATUS = "ckb_status";
 
-	private INetworkService mService = null;
+	private INetworkService mService;
 	private boolean mStarted = false;
 	private CheckBoxPreference mServiceStatus;
 
@@ -38,7 +41,10 @@ implements OnSharedPreferenceChangeListener {
 
 		// Get a reference to the preferences
 		mServiceStatus = (CheckBoxPreference)getPreferenceScreen()
-		.findPreference(KEY_CKB_STATUS);	
+			.findPreference(KEY_CKB_STATUS);
+		
+		this.bindService(new Intent(Preferences.this, NetworkServiceImpl.class),
+				mConnection, Context.BIND_AUTO_CREATE);
 
 	}
 
@@ -90,29 +96,41 @@ implements OnSharedPreferenceChangeListener {
 	}
 	
 	private void startService(){
-		if (mStarted) {
-			Toast.makeText(Preferences.this, "Service already started", 
-					Toast.LENGTH_SHORT).show();
-		} else {
-			Intent i = new Intent();
-			i.setClassName("ch.teamcib.mms.service", 
-					"ch.teamcib.mms.service.NetworkServiceImpl");
-			startService(i);
-			mStarted = true;
+		try {
+			Toast.makeText(this, mService.getData(), Toast.LENGTH_SHORT).show();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+//		if (mStarted) {
+//			Toast.makeText(Preferences.this, "Service already started", 
+//					Toast.LENGTH_SHORT).show();
+//		} else {
+//			Intent i = new Intent();
+//			i.setClassName("ch.teamcib.mms.service", 
+//					"ch.teamcib.mms.service.NetworkServiceImpl");
+//			startService(i);
+//			mStarted = true;
+//		}
 	}
 	
 	private void stopService(){
-		if (!mStarted) {
-			Toast.makeText(Preferences.this, "Service not yet started", 
-					Toast.LENGTH_SHORT).show();
-		} else {
-			Intent i = new Intent();
-			i.setClassName("ch.teamcib.mms.service", 
-					"ch.teamcib.mms.service.NetworkServiceImpl");
-			stopService(i);
-			mStarted = false;
+		try {
+			Toast.makeText(this, mService.getData(), Toast.LENGTH_SHORT).show();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+//		if (!mStarted) {
+//			Toast.makeText(Preferences.this, "Service not yet started", 
+//					Toast.LENGTH_SHORT).show();
+//		} else {
+//			Intent i = new Intent();
+//			i.setClassName("ch.teamcib.mms.service", 
+//					"ch.teamcib.mms.service.NetworkServiceImpl");
+//			stopService(i);
+//			mStarted = false;
+//		}
 	}
 
 

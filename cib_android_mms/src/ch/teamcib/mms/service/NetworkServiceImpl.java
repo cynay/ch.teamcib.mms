@@ -48,7 +48,9 @@ public class NetworkServiceImpl extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-
+		Log.i("-> REMOTE SERVICE", "onCreate()");
+		mServiceHandler = new Handler();
+		mServiceHandler.postDelayed(mTask, 5000L);
 		// init the service here
 		//startService();
 
@@ -57,7 +59,8 @@ public class NetworkServiceImpl extends Service {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-
+		Log.i("-> REMOTE SERVICE", "onDestroy()");
+		android.os.Process.killProcess(android.os.Process.myPid());
 		//stopService();
 
 	}
@@ -65,8 +68,9 @@ public class NetworkServiceImpl extends Service {
 	@Override
 	public void onStart(Intent intent, int startId){
 		super.onStart(intent, startId);
-		mServiceHandler = new Handler();
-		mServiceHandler.postDelayed(mTask, 1000L);
+//		mServiceHandler = new Handler();
+//		mServiceHandler.postDelayed(mTask, 1000L);
+		Log.i("-> REMOTE SERVICE", "onStart()");
 	}
 
 	//	private void startService() {
@@ -104,7 +108,8 @@ public class NetworkServiceImpl extends Service {
 				mSocket = new TCPSocket(mHost,mPort);
 
 				++mTEST;
-				mServiceHandler.postDelayed(this,1000L);
+				mServiceHandler.postDelayed(this,5000L);
+				Log.i("-> REMOTE SERVICE", "Task class ");
 //				String msg = mSocket.receiveLine();
 //				if (msg != null){
 //					Log.i("MESSAGE", "Server: \t" + msg);
