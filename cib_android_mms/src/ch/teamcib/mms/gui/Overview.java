@@ -25,6 +25,10 @@ public class Overview extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.overview); 
+		
+		// start service
+		NetworkServiceClient.startSvc(this);
+		
 
 	}
 

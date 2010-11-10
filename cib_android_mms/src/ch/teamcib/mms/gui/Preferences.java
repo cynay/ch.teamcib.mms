@@ -29,9 +29,9 @@ implements OnSharedPreferenceChangeListener {
 
 	public static final String KEY_CKB_STATUS = "ckb_status";
 
-	private INetworkService mService;
-	private boolean mStarted = false;
 	private CheckBoxPreference mServiceStatus;
+	private INetworkService mNetworkService;
+	
 
 	@Override
 	public void onCreate(Bundle bundle) {
@@ -43,10 +43,10 @@ implements OnSharedPreferenceChangeListener {
 		mServiceStatus = (CheckBoxPreference)getPreferenceScreen()
 			.findPreference(KEY_CKB_STATUS);
 		
-		this.bindService(new Intent(Preferences.this, NetworkServiceImpl.class),
-				mConnection, Context.BIND_AUTO_CREATE);
+		mServiceStatus.setChecked(false);
 
 	}
+	
 
 	@Override
 	protected void onResume() {
@@ -55,6 +55,10 @@ implements OnSharedPreferenceChangeListener {
 		// Set up a listener whenever a key changes            
 		getPreferenceScreen().getSharedPreferences()
 		.registerOnSharedPreferenceChangeListener(this);
+		
+		// bind to service
+		NetworkServiceClient.bindSvc(this);
+		Log.i("-> PREFERENCES", "onResume()");
 	}
 
 	@Override
@@ -63,7 +67,11 @@ implements OnSharedPreferenceChangeListener {
 
 		// Unregister the listener whenever a key changes            
 		getPreferenceScreen().getSharedPreferences()
-		.unregisterOnSharedPreferenceChangeListener(this);    
+		.unregisterOnSharedPreferenceChangeListener(this); 
+		
+		// unbind from service
+		NetworkServiceClient.unbindSvc(this);
+		Log.i("-> PREFERENCES", "onPause()");
 	}
 
 	@Override
@@ -97,10 +105,12 @@ implements OnSharedPreferenceChangeListener {
 	
 	private void startService(){
 		try {
-			mService.startService();
-			Toast.makeText(this, mService.getData(), Toast.LENGTH_SHORT).show();
+			mNetworkService = NetworkServiceClient.getService();
+			mNetworkService.startService();
+			Toast.makeText(this, mNetworkService.getData(), Toast.LENGTH_SHORT).show();
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
+			Log.i("-> PREFERENCES", "startService() Execption");
 			e.printStackTrace();
 		}
 //		if (mStarted) {
@@ -117,8 +127,9 @@ implements OnSharedPreferenceChangeListener {
 	
 	private void stopService(){
 		try {
-			mService.stopService();
-			Toast.makeText(this, mService.getData(), Toast.LENGTH_SHORT).show();
+			mNetworkService = NetworkServiceClient.getService();
+			mNetworkService.stopService();
+			Toast.makeText(this, mNetworkService.getData(), Toast.LENGTH_SHORT).show();
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -134,34 +145,4 @@ implements OnSharedPreferenceChangeListener {
 //			mStarted = false;
 //		}
 	}
-
-
-
-	private ServiceConnection mConnection = new ServiceConnection() {
-
-		@Override
-		public void onServiceConnected(ComponentName name, IBinder service) {
-			// TODO Auto-generated method stub
-			// This is called when the connection with the service has been
-			// established, giving us the service object we can use to
-			// interact with the service.  We are communicating with our
-			// service through an IDL interface, so get a client-side
-			// representation of that from the raw service object.
-			mService = INetworkService.Stub.asInterface(service);
-			Log.i("-> REMOTE SERVICE", "Attached.");
-
-
-		}
-
-		@Override
-		public void onServiceDisconnected(ComponentName name) {
-			// TODO Auto-generated method stub
-			// This is called when the connection with the service has been
-			// unexpectedly disconnected -- that is, its process crashed.
-			mService = null;
-			Log.i("-> REMOTE SERVICE", "Disconnected.");
-
-		}
-
-	};
 }
