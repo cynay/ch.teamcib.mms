@@ -14,9 +14,13 @@ import java.util.*;
  */
 class Task implements Runnable{
     
+	private static final String INFO = "0";
+	private static final String DATA = "1";
+	private static final String RQST = "2";
+	
     private TCPSocket       socket;
     private ParallelServer  ps;
-    private String          nick;
+    private String          mHostname;
 
     /**
      * Constructor
@@ -27,8 +31,8 @@ class Task implements Runnable{
     public Task(TCPSocket socket, ParallelServer ps){
         this.socket  = socket;
         this.ps      = ps;
-        AliveTask at = new AliveTask(this.socket, this.ps);
-        new Thread(at).start();
+//        AliveTask at = new AliveTask(this.socket, this.ps);
+//        new Thread(at).start();
     }
 
     /**
@@ -41,30 +45,38 @@ class Task implements Runnable{
 
         // execute client requests
         try{
-            System.out.println("[*] connected");
+            System.out.println("[*] DEBUG: new client connected");
 
             while(true){
                 request = socket.receiveLine();
 
                 if(request != null){
-                    System.out.println("[*] new request: " + request);
+                    System.out.println("[*] DEBUG: new request: " + request);
 
                     String cmd[] = request.split("&");
 
-                    if(cmd[1].equals("msg")){
-                        ps.newMessage(request);
-                    } else if(cmd[1].equals("pmsg")){
-                        socket.sendLine("&pmsg&"+ cmd[3] );
-                        ps.newPrivMessage(request);
-                    } else if(cmd[1].equals("cmd")) {
-                        if(cmd[2].equals("nick")) {
-                            this.nick = cmd[3];
-                            ps.addClientName(nick);
-                        } else if (cmd[2].equals("exit")) {
-                            ps.removeClientName(nick);
-                        }
+//                    System.out.println(cmd[0]);
+//                    System.out.println(cmd[1]);
+//                    System.out.println(cmd[2]);
+
+                    if(cmd[0].equals(INFO)){
+                    	System.out.println("[*] INFO: " + request);
+//                        ps.newMessage(request);
+                    } else if(cmd[0].equals(DATA)){
+                    	System.out.println("[*] DATA: " + request);
+//                        socket.sendLine("&pmsg&"+ cmd[3] );
+                        ps.sendData("1&" + mHostname + "&true");
+                    } else if(cmd[0].equals(RQST)) {
+                    	System.out.println("[*] RQST: " + request);
+                    	
+                        if(cmd[1].equals("hostname")) {
+                            mHostname = cmd[2];
+                            ps.addHost(mHostname);
+                        } else if (cmd[1].equals("exit")) {
+                            ps.removeHost(mHostname);
+                        } 
                     } else {
-                        System.out.println("[*] error: no valid command string");
+                        System.out.println("[*] ERROR: no valid command string");
                     }
 
                 } else {
@@ -96,63 +108,63 @@ class Task implements Runnable{
     }
 
     /**
-     * getter for the nickname
+     * getter for the Hostname
      *
-     * @return  The nickname
+     * @return  the Hostname of this instance
      */
-    public String getNick(){
-        return this.nick;
+    public String getHostname(){
+        return this.mHostname;
     }
 }
 
 
 
-/**
- * 
- *
- * @author Yannic Schneider
- */
-class AliveTask implements Runnable{
-    
-    private TCPSocket       socket;
-    private ParallelServer  ps;
-    private String          nick;
-
-    /**
-     * Constructor
-     *
-     * @param socket    the socket from the client
-     * @param ps        the Server-instance
-     */
-    public AliveTask(TCPSocket socket, ParallelServer ps){
-        this.socket  = socket;
-        this.ps      = ps;
-    }
-
-    /**
-     * send Alive signal all x seconds
-     *
-     */
-    public void run(){
-        try{
-            System.out.println("[*] connected AliveTask");
-
-            for(int i = 0; i < 10; i++){
-            	socket.sendLine("ALIVE: " + i );
-            	Thread.sleep(1000);
-            }
-           
-        } catch(Exception e) {
-            System.out.println(e);
-        }
-
-        try{
-            socket.close();
-        } catch (IOException e) {
-            System.out.println(e);
-        }
-    }
-}
+///**
+// * 
+// *
+// * @author Yannic Schneider
+// */
+//class AliveTask implements Runnable{
+//    
+//    private TCPSocket       socket;
+//    private ParallelServer  ps;
+//    private String          nick;
+//
+//    /**
+//     * Constructor
+//     *
+//     * @param socket    the socket from the client
+//     * @param ps        the Server-instance
+//     */
+//    public AliveTask(TCPSocket socket, ParallelServer ps){
+//        this.socket  = socket;
+//        this.ps      = ps;
+//    }
+//
+//    /**
+//     * send Alive signal all x seconds
+//     *
+//     */
+//    public void run(){
+//        try{
+//            System.out.println("[*] connected AliveTask");
+//
+//            for(int i = 0; i < 10; i++){
+//            	socket.sendLine("ALIVE: " + i );
+//            	Thread.sleep(1000);
+//            }
+//           
+//        } catch(Exception e) {
+//            System.out.println(e);
+//        }
+//
+//        try{
+//            socket.close();
+//        } catch (IOException e) {
+//            System.out.println(e);
+//        }
+//    }
+//}
 
 
 
@@ -160,10 +172,11 @@ class AliveTask implements Runnable{
  * This class is for monitoring the thread-pool and waiting for incoming
  * connections.
  *
- * @author cYnaY
+ * @author Yannic Schneider
  */
 public class ParallelServer {
 
+	private final int  LISTENING_PORT  = 1337;
     private final int  CORE_POOL_SIZE  = 6;
     private final int  MAX_POOL_SIZE   = 8;
     private final long KEEP_ALIVE_TIME = 10;
@@ -204,57 +217,72 @@ public class ParallelServer {
     }
     
     /**
-     * Method for sending a new private messages to the specified client
+     * Method for sending a new messages to the specified client
      *
      * @param message   the message
      */
-    public void newPrivMessage(String message){
-        String recipient = message.split("&")[2];
-        message = "&pmsg&" + message.split("&")[3];
+    public void sendClientMessage(String message){
+        String recipient = message.split("&")[1];
+        message = "0&" + message.split("&")[2];
         for(int i = 0; i < clients.size(); i++){
             Task t = clients.get(i);
-            if(t.getNick().equals(recipient)){
+            if(t.getHostname().equals(recipient)){
                 t.sendMessage(message);
+            }
+        }
+    }
+    
+    /**
+     * Method for sending data to the specified client
+     *
+     * @param message   the message
+     */
+    public void sendData(String data){
+        String recipient = data.split("&")[1];
+        data = "1&"+ recipient + "&" + data.split("&")[2];
+        for(int i = 0; i < clients.size(); i++){
+            Task t = clients.get(i);
+            if(t.getHostname().equals(recipient)){
+                t.sendMessage(data);
             }
         }
     }
 
     /**
-     * Adds a clientname to the hashset
+     * Adds a hostname to the hashset
      * Is called when someone new connects
      *
-     * @param nick      The nick to add
+     * @param hostname      The hostname to add
      */
-    public void addClientName(String nick){
-        clientNames.add(nick);
+    public void addHost(String hostname){
+        clientNames.add(hostname);
     }
 
     /**
      * removes the specified client from the hashset
      * Is called when the client quits
      *
-     * @param nick      The nick to remove
+     * @param hostname      The hostname to remove
      */
-    public void removeClientName(String nick){
-        clientNames.remove(nick);
-        this.newMessage(this.getClientNames());
+    public void removeHost(String hostname){
+        clientNames.remove(hostname);
     }
-
-    /**
-     * returns all Clientnames of the clients which are connected to the server
-     * at the moment
-     *
-     * @return      a String with all clientnames separeted by '&'
-     */
-    public String getClientNames(){
-        String allClients = "&cmd&clientList&";
-
-        for(String s : clientNames){
-            allClients += "&" + s;
-        }
-
-        return allClients;
-    }
+//
+//    /**
+//     * returns all Clientnames of the clients which are connected to the server
+//     * at the moment
+//     *
+//     * @return      a String with all clientnames separeted by '&'
+//     */
+//    public String getClientNames(){
+//        String allClients = "&cmd&clientList&";
+//
+//        for(String s : clientNames){
+//            allClients += "&" + s;
+//        }
+//
+//        return allClients;
+//    }
 
 
     /**
@@ -270,23 +298,23 @@ public class ParallelServer {
                 TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
 
         try {
-            srvSocket = new ServerSocket(1337); // create socket
+            srvSocket = new ServerSocket(LISTENING_PORT); // create socket
         } catch(Exception e){
-            System.out.println("[*] error while creating serversocket");
+            System.out.println("[*] ERROR: creating serversocket failed");
             return;
         }
 
         while(true){
             try{
-                // wait for connectin then create streams
-                System.out.println("[*] Wait for connection");
+                // wait for connection then create streams
+                System.out.println("[*] DEBUG: Wait for new connection");
                 tcpSocket = new TCPSocket(srvSocket.accept());
                 Task task = new Task(tcpSocket,this);
                 pool.execute(task);
                 clients.add(task);
-                task.sendMessage("&msg&# welcome");
+                task.sendMessage("0&DEBUGINFO: &# welcome");
                 Thread.sleep(50);
-                this.newMessage(this.getClientNames());
+//                this.newMessage(this.getClientNames());
                         
 
             }catch(Exception e){

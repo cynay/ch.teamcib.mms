@@ -18,7 +18,12 @@ import javax.swing.SwingUtilities;
  */
 public class GUI extends javax.swing.JFrame {
 
-    /** Creates new form testFrame */
+    /**
+	 * autocreated
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	/** Creates new form testFrame */
     public GUI() {
         initComponents();
     }
@@ -41,15 +46,18 @@ public class GUI extends javax.swing.JFrame {
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        javax.swing.GroupLayout layout = new javax.swing.
+        	GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 
+            		400, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 
+            		300, Short.MAX_VALUE)
         );
         
         this.redirectSystemStreams();
