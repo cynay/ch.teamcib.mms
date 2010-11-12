@@ -5,7 +5,7 @@
     android:stretchColumns="0">
     <TableRow>
         <TextView
-            android:text="server 1"
+            android:text="Testserver"
             android:padding="3dip" />
         <ImageButton
         	android:id="@+id/btn_status"
@@ -33,10 +33,10 @@
     
     <TableRow>
         <TextView
-            android:text="server 2"
+            android:text="server N"
             android:padding="3dip" />
         <ImageButton
-        	android:id="@+id/btn_status"
+        	android:id="@+id/btn_status2"
         	android:layout_width="24px"
 			android:layout_height="24px"
 			android:background="@drawable/emo_im_crying"
@@ -58,5 +58,19 @@
             android:padding="3dip" />
         	
     </TableRow>
+    
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="0"
+                android:id="@+id/maintable" >
+    </TableLayout>
 
+	<TextView  
+		android:id="@+id/timer"
+		android:gravity="bottom"
+    	android:layout_width="fill_parent" 
+    	android:layout_height="wrap_content" 
+    	android:text="time"
+ 		/>
 </TableLayout>

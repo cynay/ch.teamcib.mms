@@ -25,9 +25,9 @@ public class NetworkServiceImpl extends Service {
 
 	// TODO add server list etc.
 	private List<String> mServers = new ArrayList<String>();
-	private Thread mThread;
+	private Task mThread;
 
-	private int mTEST = 0;
+	private String mData;
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -40,7 +40,7 @@ public class NetworkServiceImpl extends Service {
 		@Override
 		public String getData() throws RemoteException {
 			// TODO Auto-generated method stub
-			return Integer.toString(mTEST);
+			return mData;
 		}
 
 		@Override
@@ -59,13 +59,13 @@ public class NetworkServiceImpl extends Service {
 	private void start(){
 		Log.i("-> REMOTE SERVICE", "start()");
 		mThread = new Task();
-		((Task) mThread).isDone = false;
+		mThread.isDone = false;
 		mThread.start();
 	}
 	
 	private void stop(){
 		Log.i("-> REMOTE SERVICE", "stop()");
-		((Task) mThread).isDone = true;
+		mThread.isDone = true;
 	}
 
 
@@ -106,26 +106,42 @@ public class NetworkServiceImpl extends Service {
 			// TODO Auto-generated method stub
 			Log.i("-> REMOTE SERVICE THREAD", "run()");
 			try {
-//				mSocket = new TCPSocket(mHost,mPort);
+				mSocket = new TCPSocket(mHost,mPort);
+				
+				mSocket.sendLine("2&hostname&myHostname");
 				
 				while(!isDone){
-					++mTEST;
-					
 					Log.i("-> REMOTE SERVICE", "Task class while() ");
+					
+					String msg = mSocket.receiveLine();
+					if (msg != null){
+						Log.i("-> SERVER MESSAGE", "Server: \t" + msg);
+						
+						String cmd[] = msg.split("&");
+						mData = cmd[2];
+						
+					}
+					
+					
+					mSocket.sendLine("1&null&null");
+					
 					Thread.sleep(4000);
 				}
 				
+				// send the server an exit message
+				mSocket.sendLine("2&exit&myHostname");
 				
-//				String msg = mSocket.receiveLine();
-//				if (msg != null){
-//					Log.i("MESSAGE", "Server: \t" + msg);
-//				}
-
-
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} catch (UnknownHostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+			
 			
 			Log.i("-> REMOTE SERVICE THREAD", "end of run()");
 		}

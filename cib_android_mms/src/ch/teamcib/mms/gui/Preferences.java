@@ -107,7 +107,7 @@ implements OnSharedPreferenceChangeListener {
 		try {
 			mNetworkService = NetworkServiceClient.getService();
 			mNetworkService.startService();
-			Toast.makeText(this, mNetworkService.getData(), Toast.LENGTH_SHORT).show();
+//			Toast.makeText(this, mNetworkService.getData(), Toast.LENGTH_SHORT).show();
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			Log.i("-> PREFERENCES", "startService() Execption");
@@ -129,7 +129,7 @@ implements OnSharedPreferenceChangeListener {
 		try {
 			mNetworkService = NetworkServiceClient.getService();
 			mNetworkService.stopService();
-			Toast.makeText(this, mNetworkService.getData(), Toast.LENGTH_SHORT).show();
+//			Toast.makeText(this, mNetworkService.getData(), Toast.LENGTH_SHORT).show();
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
