@@ -1,56 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:stretchColumns="0">
-    <TableRow>
-        <TextView
-            android:text="server 1"
-            android:padding="3dip" />
-        <ImageButton
-        	android:id="@+id/btn_status"
-        	android:layout_width="24px"
-			android:layout_height="24px"
-			android:gravity="right"
-            android:padding="3dip" />
-        <ImageButton
-        	android:id="@+id/btn_edit"
-        	android:layout_width="24px"
-			android:layout_height="24px"
-			android:gravity="right"
-            android:padding="3dip" />
-        <ImageButton
-        	android:id="@+id/btn_delete"
-        	android:layout_width="24px"
-			android:layout_height="24px"
-			android:gravity="right"
-            android:padding="3dip" />
-        	
-    </TableRow>
+    android:layout_height="fill_parent" >
     
-    <TableRow>
-        <TextView
-            android:text="server 2"
-            android:padding="3dip" />
-        <ImageButton
-        	android:id="@+id/btn_status"
-        	android:layout_width="24px"
-			android:layout_height="24px"
-			android:gravity="right"
-            android:padding="3dip" />
-        <ImageButton
-        	android:id="@+id/btn_edit"
-        	android:layout_width="24px"
-			android:layout_height="24px"
-			android:gravity="right"
-            android:padding="3dip" />
-        <ImageButton
-        	android:id="@+id/btn_delete"
-        	android:layout_width="24px"
-			android:layout_height="24px"
-			android:gravity="right"
-            android:padding="3dip" />
-        	
-    </TableRow>
+	<TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hostname or IP :" />
+    <EditText android:id="@+id/edt_hostname"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"/>
 
-</TableLayout>
+    <View
+    	android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:background="#FF909090" />
+        
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Port :" />
+    <EditText android:id="@+id/edt_port"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"/>
+    
+    <View
+    	android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:background="#FF909090" />
+        
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Securekey :" />
+    <EditText android:id="@+id/edt_securekey"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"/>
+
+	<View
+		android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:background="#FF909090" />
+    
+    <!-- Used for distance ... -->
+    <View
+    	android:layout_width="fill_parent"
+        android:layout_height="60dip"
+        android:background="#FFFFFFFF" />
+        
+   	<LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:layout_weight="1">
+	    <Button 
+		    android:id="@+id/btn_cancel"   
+		    android:layout_width="wrap_content" 
+		    android:layout_height="wrap_content"    
+		    android:gravity="center"
+		    android:layout_weight="1"
+		    android:text="@string/btn_cancel"
+		    android:onClick="onClickCancel" />   
+	  	<Button 
+		    android:id="@+id/btn_save" 
+		    android:layout_width="wrap_content" 
+		    android:layout_height="wrap_content" 
+		    android:gravity="center"
+		    android:layout_weight="1"
+		    android:text="@string/btn_save"
+			android:onClick="onClickSave" />
+	</LinearLayout>
+</LinearLayout>

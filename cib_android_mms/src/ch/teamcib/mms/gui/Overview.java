@@ -1,6 +1,8 @@
 package ch.teamcib.mms.gui;
 
 import java.io.IOException;
+import java.util.ArrayList;
+
 import ch.teamcib.mms.*;
 import ch.teamcib.mms.R.*;
 import ch.teamcib.mms.service.INetworkService;
@@ -20,13 +22,35 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.*;
 import android.widget.TableLayout.LayoutParams;
+import android.view.ContextMenu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.View.OnCreateContextMenuListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
 
 /**
  * @author Yannic Schneider
  */
 public class Overview extends Activity {
+	
+	// ===========================================================
+    // Final Fields
+    // ===========================================================
+    protected static final int CONTEXTMENU_DELETEITEM = 0;
+
+    // ===========================================================
+    // Fields
+    // ===========================================================
+    protected ListView mFavList;
+    protected ArrayList<Favorite> fakeFavs = new ArrayList<Favorite>();
 	
 	private INetworkService mNetworkService;
 	private RefreshTask mThread;
@@ -64,6 +88,26 @@ public class Overview extends Activity {
 //		mThread.start();
 //		imgBtn = (ImageButton) this.findViewById(R.id.btn_status);
 //		Log.i("-> GUI OVERVIEW", "next is changeImg()");
+
+		// NEW //
+		
+		/* Add some items to the list the listview will be showing. */
+        fakeFavs.add(new Favorite("localhost", "online"));
+        fakeFavs.add(new Favorite("caffein.ch", "online"));
+        fakeFavs.add(new Favorite("micro$oft.com", "offline"));
+
+        this.mFavList = (ListView) this.findViewById(R.id.list_servers);
+        // this triggers the ContextMenu of an Item in the List with just a Click 
+        mFavList.setOnItemClickListener(new OnItemClickListener() {
+        	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+        		arg1.showContextMenu();
+        	}
+        });
+
+        initListView();
+		
+		
+		// /NEW //
 
 		mHandler.removeCallbacks(mUpdateTimeTask);
         mHandler.postDelayed(mUpdateTimeTask, 100);
@@ -108,6 +152,7 @@ public class Overview extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.opt_add:
+			startActivity(new Intent(this, ServerConfig.class));
 			return true;
 		case R.id.opt_editSettings:
 			startActivity(new Intent(this, Preferences.class));
@@ -135,7 +180,8 @@ public class Overview extends Activity {
 				new CountDownTimer(10000, 200) {
 
 				     public void onTick(long millisUntilFinished) {
-				    	 mTimer.setText("Next refresh in: " + millisUntilFinished / 1000);
+				    	 mTimer.setText("Next refresh in: " + 
+				    			 millisUntilFinished / 1000);
 				     }
 
 				     public void onFinish() {
@@ -181,7 +227,8 @@ public class Overview extends Activity {
 			
 			// Create a TableRow
 	        TableRow tr = new TableRow(c);
-	        tr.setLayoutParams(new LayoutParams( LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+	        tr.setLayoutParams(new LayoutParams( LayoutParams.FILL_PARENT, 
+	        		LayoutParams.WRAP_CONTENT));
 			
 //			// Create a TextView 
 //	        TextView labelTV = new TextView(c);
@@ -196,7 +243,8 @@ public class Overview extends Activity {
 	        tr.addView(i);
 
 	        // Add the TableRow to the TableLayout
-	        tl.addView(tr, new TableLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+	        tl.addView(tr, new TableLayout.LayoutParams(
+	        		LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
 			
 			while(true){
 				if (b){
@@ -222,5 +270,73 @@ public class Overview extends Activity {
 		}
 		
 	}
+	
+
+
+	// NEW
+	private void refreshFavListItems() {
+		mFavList.setAdapter(new ArrayAdapter<Favorite>(this, 
+				android.R.layout.simple_list_item_1, fakeFavs));
+	}
+
+	private void initListView() {
+		/* Loads the items to the ListView. */
+		refreshFavListItems();
+
+		/* Add Context-Menu listener to the ListView. */
+		mFavList.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
+			 
+            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+            	menu.setHeaderTitle("ContextMenu");
+				menu.add(0, CONTEXTMENU_DELETEITEM, 1, "Delete this server!");
+				/* Add as many context-menu-options as you want to. */
+			}
+		});
+	}
+
+	// ===========================================================
+	// Methods from SuperClass/Interfaces
+	// ===========================================================
+	@Override
+	public boolean onContextItemSelected(MenuItem aItem) {
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) aItem.getMenuInfo();
+
+		/* Switch on the ID of the item, to get what the user selected. */
+		switch (aItem.getItemId()) {
+		case CONTEXTMENU_DELETEITEM:
+			/* Get the selected item out of the Adapter by its position. */
+			Favorite favContexted = (Favorite) mFavList.getAdapter().getItem(info.position);
+			/* Remove it from the list.*/
+			fakeFavs.remove(favContexted);
+
+			refreshFavListItems();
+			return true; /* true means: "we handled the event". */
+		}
+		return false;
+	}
+
+	// ===========================================================
+    // Inner and Anonymous Classes
+    // ===========================================================
+    /** Small class holding some basic */
+    protected class Favorite {
+
+            protected String name;
+            protected String status;
+
+            protected Favorite(String name, String status) {
+                    this.name = name;
+                    this.status = status;
+            }
+
+            /** The ListView is going to display the toString() return-value! */
+            public String toString() {
+                    return name + " [" + status + "]";
+            }
+
+            public boolean equals(Object o) {
+                    return o instanceof Favorite && ((Favorite) o).name.compareTo(name) == 0;
+            }
+    }
 	
 }
