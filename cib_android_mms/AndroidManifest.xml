@@ -17,6 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".gui.ServerConfig" />
+        <activity android:name=".gui.ServerDetail" />
         <activity android:name=".gui.ShowHelp" />
         <activity android:name=".gui.EditSettings" />
         <activity android:name=".gui.Preferences"

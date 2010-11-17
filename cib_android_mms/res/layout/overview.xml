@@ -1,81 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:stretchColumns="0">
-    <TableRow>
-        <TextView
-            android:text="Testserver"
-            android:padding="3dip" />
-        <ImageButton
-        	android:id="@+id/btn_status"
-        	android:layout_width="24px"
-			android:layout_height="24px"
-			android:background="@drawable/emo_im_cool"
-			android:gravity="right"
-            android:padding="3dip" />
-        <ImageButton
-        	android:id="@+id/btn_edit"
-        	android:layout_width="24px"
-			android:layout_height="24px"
-			android:background="@android:drawable/ic_menu_manage"
-			android:gravity="right"
-            android:padding="3dip" />
-        <ImageButton
-        	android:id="@+id/btn_delete"
-        	android:layout_width="24px"
-			android:layout_height="24px"
-			android:background="@android:drawable/ic_menu_delete"
-			android:gravity="right"
-            android:padding="3dip" />
-        	
-    </TableRow>
+    android:layout_height="fill_parent" >
+  
+    <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:layout_weight="1">
+      
+      	<TextView  
+			android:id="@+id/timer"
+			android:layout_width="wrap_content" 
+		    android:layout_height="wrap_content" 
+		    android:gravity="center"
+		    android:layout_weight="1"
+	    	android:text="time"	/>
+	    	
+      	<Button 
+		    android:id="@+id/btn_refresh" 
+		    android:layout_width="wrap_content" 
+		    android:layout_height="wrap_content"    
+		    android:gravity="center"
+		    android:layout_weight="1"
+		    android:text="@string/btn_refresh"
+			android:onClick="onClickRefresh" />  
+	</LinearLayout>
     
-    <TableRow>
-        <TextView
-            android:text="server N"
-            android:padding="3dip" />
-        <ImageButton
-        	android:id="@+id/btn_status2"
-        	android:layout_width="24px"
-			android:layout_height="24px"
-			android:background="@drawable/emo_im_crying"
-			android:gravity="right"
-            android:padding="3dip" />
-        <ImageButton
-        	android:id="@+id/btn_edit"
-        	android:layout_width="24px"
-			android:layout_height="24px"
-			android:background="@android:drawable/ic_menu_manage"
-			android:gravity="right"
-            android:padding="3dip" />
-        <ImageButton
-        	android:id="@+id/btn_delete"
-        	android:layout_width="24px"
-			android:layout_height="24px"
-			android:background="@android:drawable/ic_menu_delete"
-			android:gravity="right"
-            android:padding="3dip" />
-        	
-    </TableRow>
-
-	<TextView  
-		android:id="@+id/timer"
-		android:gravity="bottom"
-    	android:layout_width="fill_parent" 
-    	android:layout_height="wrap_content" 
-    	android:text="time"
- 		/>
- 		
- 	<!-- This is a second try ... -->	
- 	<TextView 
-    	android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="\n\nLong-Press on of the Items in the list for context menu." />
     <ListView android:id="@+id/list_servers"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"/>
+        android:layout_height="wrap_content"/>
  		
- 		
- 	
-</TableLayout>
+</LinearLayout>

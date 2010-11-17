@@ -25,6 +25,7 @@
     <EditText android:id="@+id/edt_port"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:text="1337"
         android:layout_marginLeft="5dp"/>
     
     <View
@@ -39,6 +40,7 @@
     <EditText android:id="@+id/edt_securekey"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:text="12:34:56:AB:CD:EF"
         android:layout_marginLeft="5dp"/>
 
 	<View

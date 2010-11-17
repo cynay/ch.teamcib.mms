@@ -62,15 +62,26 @@ public class ServerConfig extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
 		setContentView(R.layout.server_config); 
 		
-		Context context = getApplicationContext();
-		CharSequence text = "TODO!";
-		int duration = Toast.LENGTH_SHORT;
-
-		Toast toast = Toast.makeText(context, text, duration);
-		toast.show();
+		try {
+//			Toast.makeText(this, savedInstanceState.getString("key") , Toast.LENGTH_SHORT).show();
+			Bundle bun = getIntent().getExtras();
+			String srvName = bun.getString("key");
+//			String srvName = getIntent().getExtras().getString("server");
+			EditText edt_hostname = (EditText)findViewById(R.id.edt_hostname);
+			edt_hostname.setText(srvName);
+		
+		} catch (Exception e){
+			// TODO
+			Toast.makeText(this, "ERROR:" + e.getMessage() , Toast.LENGTH_SHORT).show();
+		}
+//		Context context = getApplicationContext();
+//		CharSequence text = "TODO!";
+//		int duration = Toast.LENGTH_SHORT;
+//
+//		Toast toast = Toast.makeText(context, text, duration);
+//		toast.show();
 			
 	}
 }
