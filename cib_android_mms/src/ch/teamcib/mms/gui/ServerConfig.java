@@ -41,22 +41,15 @@ public class ServerConfig extends Activity {
 	 * @version Android 1.6 >
 	 */
 	public void onClickSave(final View sfNormal) {
-		// Get the EditText and Button References
 		
-		Toast.makeText(this, "TODO", Toast.LENGTH_SHORT).show();
+		EditText et = (EditText)findViewById(R.id.edt_hostname);
+		Editable txt = et.getText();
+		String hostname = txt.toString();
 		
-//		txt_editor = (EditText)findViewById(R.id.txt_editor);
-//		Editable txt = txt_editor.getText();
-//		boolean what = FileOperations.saveCipherFile(txt.toString(),this.PASSWORD);
-//		
-//		Context context = getApplicationContext();
-//		CharSequence text = "Failed to save!";
-//		int duration = Toast.LENGTH_SHORT;
-//		if (what == true)
-//			text = "Saved!";		
-//
-//		Toast toast = Toast.makeText(context, text, duration);
-//		toast.show();
+		SharedPreferencesManager.addServer(this, hostname, "1337");
+
+		Toast.makeText(this, "Server saved!", Toast.LENGTH_SHORT).show();
+		this.finish();
 	}
 	
 	@Override
@@ -75,13 +68,6 @@ public class ServerConfig extends Activity {
 		} catch (Exception e){
 			// TODO
 			Toast.makeText(this, "ERROR:" + e.getMessage() , Toast.LENGTH_SHORT).show();
-		}
-//		Context context = getApplicationContext();
-//		CharSequence text = "TODO!";
-//		int duration = Toast.LENGTH_SHORT;
-//
-//		Toast toast = Toast.makeText(context, text, duration);
-//		toast.show();
-			
+		}			
 	}
 }

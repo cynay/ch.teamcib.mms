@@ -46,13 +46,13 @@ import android.widget.AdapterView.OnItemLongClickListener;
 public class Overview extends Activity {
 	
 	// ===========================================================
-    // Final Fields
+    // Finals 
     // ===========================================================
 	protected static final int CONTEXTMENU_EDITITEM   = 0;
     protected static final int CONTEXTMENU_DELETEITEM = 1;
 
     // ===========================================================
-    // Fields
+    // Members
     // ===========================================================
     protected ListView mFavList;
     protected ArrayList<Favorite> fakeFavs = new ArrayList<Favorite>();
@@ -80,33 +80,17 @@ public class Overview extends Activity {
 
 		// NEW //
 		
-		/* Add some items to the list the listview will be showing. */
-        fakeFavs.add(new Favorite("localhost", "online"));
-        fakeFavs.add(new Favorite("caffein.ch", "online"));
-        fakeFavs.add(new Favorite("micro$oft.com", "offline"));
-        fakeFavs.add(new Favorite("miau.com", "offline"));
-        fakeFavs.add(new Favorite("test.com", "offline"));
-        fakeFavs.add(new Favorite("hola.com", "offline"));
+//		SharedPreferencesManager.setServers(this); //TODO remove after testing
 
         this.mFavList = (ListView) this.findViewById(R.id.list_servers);
         
-        // this triggers the detail view of an Item in the List with just a Click 
+        // this triggers the detail view of an Item in the List with a Click 
         mFavList.setOnItemClickListener(new OnItemClickListener() {
-        	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-//        		arg1.showContextMenu();
+        	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, 
+        			long arg3) {
         		startActivity(new Intent(arg1.getContext(), ServerDetail.class));
         	}
         });
-        
-        // this triggers the ContextMenu of an Item in the List with a LongClick 
-//        mFavList.setOnItemLongClickListener(new OnItemLongClickListener() {
-//			@Override
-//			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-//					int arg2, long arg3) {
-//				arg1.showContextMenu();
-//				return false;
-//			}
-//        });
 
         initListView();
 		
@@ -116,6 +100,36 @@ public class Overview extends Activity {
 		mHandler.removeCallbacks(mUpdateTimeTask);
         mHandler.postDelayed(mUpdateTimeTask, 100);
 	
+	}
+	
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		// bind to service
+		NetworkServiceClient.bindSvc(this);
+		Log.i("-> OVERVIEW", "onResume()");
+		
+		fakeFavs.clear();
+		
+		/* refresh items for the list the listview  */
+		String[] servers = SharedPreferencesManager.getServers(this);
+		for (int i = 0; i < servers.length; i++){
+			if(servers[i] != null)
+				fakeFavs.add(new Favorite(servers[i],"test"));
+		}
+		
+		refreshFavListItems();
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		
+		// unbind from service
+		NetworkServiceClient.unbindSvc(this);
+		Log.i("-> OVERVIEW", "onPause()");
 	}
 	
 	/**
@@ -132,30 +146,11 @@ public class Overview extends Activity {
 		Toast.makeText(this, "TODO: refresh", Toast.LENGTH_SHORT).show();
 	}
 	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		
-		// bind to service
-		NetworkServiceClient.bindSvc(this);
-		Log.i("-> OVERVIEW", "onResume()");
-	}
-	
-	@Override
-	protected void onPause() {
-		super.onPause();
-		
-		// unbind from service
-		NetworkServiceClient.unbindSvc(this);
-		Log.i("-> OVERVIEW", "onPause()");
-	}
-	
 	public void setBoolStatus(boolean status){
 		this.mBoolStatus = status;
 	}
 	
 
-	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
@@ -186,6 +181,7 @@ public class Overview extends Activity {
 		}
 	}
 
+	
 	private Runnable mUpdateTimeTask = new Runnable() {
 		
 		private boolean reset = true;
@@ -247,8 +243,8 @@ public class Overview extends Activity {
 			 
             public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
             	menu.setHeaderTitle("Context Menu");
-            	menu.add(0, CONTEXTMENU_EDITITEM, 1, "Edit this server!");
-				menu.add(0, CONTEXTMENU_DELETEITEM, 2, "Delete this server!");
+            	menu.add(0, CONTEXTMENU_EDITITEM, 1, "Edit");
+				menu.add(0, CONTEXTMENU_DELETEITEM, 2, "Delete!");
 				/* Add as many context-menu-options as you want to. */
 			}
 		});
@@ -290,6 +286,7 @@ public class Overview extends Activity {
 			/* Get the selected item out of the Adapter by its position. */
 			favContexted = (Favorite) mFavList.getAdapter().getItem(info.position);
 			/* Remove it from the list.*/
+			SharedPreferencesManager.removeServer(this, favContexted.name);
 			fakeFavs.remove(favContexted);
 
 			refreshFavListItems();
