@@ -22,10 +22,15 @@ import android.widget.Toast;
  * @author Yannic Schneider
  */
 public class NetworkServiceImpl extends Service {
+	
+	// ===========================================================
+    // Finals
+    // ===========================================================
+	private static final int NUMBER_OF_SERVERS = 12;
 
-	// TODO add server list etc.
-	private List<String> mServers = new ArrayList<String>();
-	private Task mThread;
+	private String[] servers = new String[NUMBER_OF_SERVERS];
+//	private Task[] mTasks;
+	private String[] mValues = new String[NUMBER_OF_SERVERS];
 
 	private String mData;
 
@@ -40,6 +45,11 @@ public class NetworkServiceImpl extends Service {
 		@Override
 		public String getData() throws RemoteException {
 			// TODO Auto-generated method stub
+			mData = "";
+			for (String val : mValues){
+				if(val != null)
+					mData += val;
+			}
 			return mData;
 		}
 
@@ -53,19 +63,33 @@ public class NetworkServiceImpl extends Service {
 		public void stopService() throws RemoteException {
 			// TODO Auto-generated method stub
 			stop();
+		}
+
+		@Override
+		public void setServers(String[] servers) throws RemoteException {
+			// TODO Auto-generated method stub
+			NetworkServiceImpl.this.servers = servers;
 		}		
 	};
 	
 	private void start(){
 		Log.i("-> REMOTE SERVICE", "start()");
-		mThread = new Task();
-		mThread.isDone = false;
-		mThread.start();
+		
+		for (int i = 0; i < servers.length; i++){
+			Log.i("-> REMOTE SERVICE", "Value: " + servers[i]);
+			if(servers[i] != null)
+				new Task(servers[i],1337 ,i).start();
+		}
+		
+//		mThread = new Task();
+//		mThread.isDone = false;
+//		mThread.start();
 	}
 	
 	private void stop(){
 		Log.i("-> REMOTE SERVICE", "stop()");
-		mThread.isDone = true;
+//		mThread.isDone = true;
+		this.stopSelf();
 	}
 
 
@@ -97,9 +121,17 @@ public class NetworkServiceImpl extends Service {
 
 		private String mHost = "192.168.66.103";
 		private int mPort = 1337;
+		private int mNumber;
 		private TCPSocket mSocket;
 		
 		public boolean isDone = false;
+		
+		public Task(String hostname, int port, int number){
+			this.mHost = hostname;
+			this.mPort = port;
+			this.mNumber = number;
+		}
+		
 
 		@Override
 		public void run() {
@@ -108,37 +140,58 @@ public class NetworkServiceImpl extends Service {
 			try {
 				mSocket = new TCPSocket(mHost,mPort);
 				
-				mSocket.sendLine("2&hostname&myHostname");
+				mSocket.sendLine("2&hostname&" + mHost);
 				
-				while(!isDone){
-					Log.i("-> REMOTE SERVICE", "Task class while() ");
+				String msg = mSocket.receiveLine();
+				if (msg != null){
+					Log.i("-> SERVER MESSAGE", "Server: \t" + msg);
 					
-					String msg = mSocket.receiveLine();
-					if (msg != null){
-						Log.i("-> SERVER MESSAGE", "Server: \t" + msg);
-						
-						String cmd[] = msg.split("&");
-						mData = cmd[2];
-						
-					}
+//					String cmd[] = msg.split("&");
+//					mValues[mNumber] = cmd[2];
 					
-					
-					mSocket.sendLine("1&null&null");
-					
-					Thread.sleep(4000);
 				}
 				
-				// send the server an exit message
-				mSocket.sendLine("2&exit&myHostname");
+				mSocket.sendLine("1&null&null");
 				
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				msg = mSocket.receiveLine();
+				if (msg != null){
+					Log.i("-> SERVER MESSAGE", "Server: \t" + msg);
+					
+					String cmd[] = msg.split("&");
+					mValues[mNumber] = "&" + mHost + ";" + cmd[2];
+					
+				}
+				
+				
+				
+//				while(!isDone){
+//					
+//					Log.i("-> REMOTE SERVICE", "Task class while() ");
+//					
+//					String msg = mSocket.receiveLine();
+//					if (msg != null){
+//						Log.i("-> SERVER MESSAGE", "Server: \t" + msg);
+//						
+//						String cmd[] = msg.split("&");
+//						mValues[mNumber] = cmd[2];
+//						
+//					}
+//					
+//					mSocket.sendLine("1&null&null");
+//					isDone = true;
+//					Thread.sleep(2000);
+//				}
+				
+				// send the server an exit message
+				mSocket.sendLine("2&exit&" + mHost);
+				
 			} catch (UnknownHostException e) {
 				// TODO Auto-generated catch block
+				mValues[mNumber] = mHost + ";false";
 				e.printStackTrace();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
+				mValues[mNumber] = mHost + ";false";
 				e.printStackTrace();
 			}
 			

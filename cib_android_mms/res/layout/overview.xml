@@ -39,7 +39,7 @@
     
     <ListView android:id="@+id/list_servers"
         android:layout_width="fill_parent"
-        android:layout_height="400sp"/>
+        android:layout_height="300sp"/>
         
 	</LinearLayout>
 </ScrollView>

@@ -73,7 +73,7 @@ public class Overview extends Activity {
 		
         mTimer = (TextView) findViewById(R.id.timer);
         
-        mNetworkService = NetworkServiceClient.getService();
+//        mNetworkService = NetworkServiceClient.getService();
 
 		// start service
 		NetworkServiceClient.startSvc(this);
@@ -110,6 +110,7 @@ public class Overview extends Activity {
 		// bind to service
 		NetworkServiceClient.bindSvc(this);
 		Log.i("-> OVERVIEW", "onResume()");
+//		mNetworkService = NetworkServiceClient.getService();
 		
 		fakeFavs.clear();
 		
@@ -121,6 +122,7 @@ public class Overview extends Activity {
 		}
 		
 		refreshFavListItems();
+		
 	}
 	
 	@Override
@@ -144,6 +146,39 @@ public class Overview extends Activity {
 	 */
 	public void onClickRefresh(final View sfNormal) {
 		Toast.makeText(this, "TODO: refresh", Toast.LENGTH_SHORT).show();
+		
+		try {
+			mNetworkService = NetworkServiceClient.getService();
+			mNetworkService.setServers(SharedPreferencesManager.getServers(this));
+			mNetworkService.startService();
+			Thread.sleep(5000);
+			String data = mNetworkService.getData();
+			Log.i("-> OVERVIEW", data );
+			
+			String servers[] = data.split("&");
+			
+			
+			fakeFavs.clear();
+			
+			/* refresh items for the list the listview  */
+			for (int i = 0; i < servers.length; i++){
+				if(servers[i] != null){
+					String svr[] = servers[i].split(";");
+					fakeFavs.add(new Favorite(svr[0], svr[1]));
+				}
+			}
+			
+			refreshFavListItems();
+			
+			
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public void setBoolStatus(boolean status){
@@ -182,14 +217,10 @@ public class Overview extends Activity {
 	}
 
 	
-	private Runnable mUpdateTimeTask = new Runnable() {
-		
-		private boolean reset = true;
-		boolean bStat;
-		
+	private Runnable mUpdateTimeTask = new Runnable() {	
+		private boolean reset = true;		
 		
 		public void run() {
-			
 			if (reset){
 				new CountDownTimer(10000, 200) {
 
@@ -209,12 +240,8 @@ public class Overview extends Activity {
 				    	 
 				    	 
 				    	 if (mBoolStatus){
-//				    		 	mImgBtn1.setBackgroundDrawable(d2);
-//				    		 	mImgBtn1.refreshDrawableState();
 				    		 	mBoolStatus = false;
 							} else {
-//								mImgBtn1.setBackgroundDrawable(d1);
-//								mImgBtn1.refreshDrawableState();
 								mBoolStatus = true;
 							}
 				         reset = true;
