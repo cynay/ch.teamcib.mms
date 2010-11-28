@@ -23,8 +23,7 @@ public class NetworkServiceClient {
 	private static INetworkService mService;
 	private static boolean mStarted = false;
 	
-	private NetworkServiceClient(){
-		
+	private NetworkServiceClient(){		
 	}
 	
 	/**

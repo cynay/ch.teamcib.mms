@@ -145,18 +145,26 @@ public class Overview extends Activity {
 	 * @version Android 1.6 >
 	 */
 	public void onClickRefresh(final View sfNormal) {
-		Toast.makeText(this, "TODO: refresh", Toast.LENGTH_SHORT).show();
+//		Toast.makeText(this, "TODO: refresh", Toast.LENGTH_SHORT).show();
+		updateServers();		
 		
+	}
+	
+	private void updateServers(){
 		try {
 			mNetworkService = NetworkServiceClient.getService();
 			mNetworkService.setServers(SharedPreferencesManager.getServers(this));
 			mNetworkService.startService();
-			Thread.sleep(5000);
+			Thread.sleep(4000);
 			String data = mNetworkService.getData();
 			Log.i("-> OVERVIEW", data );
 			
-			String servers[] = data.split("&");
+			DataHelper dh = new DataHelper(this);
 			
+			
+			
+			
+			String servers[] = data.split("&");
 			
 			fakeFavs.clear();
 			
@@ -164,6 +172,12 @@ public class Overview extends Activity {
 			for (int i = 0; i < servers.length; i++){
 				if(servers[i] != null){
 					String svr[] = servers[i].split(";");
+					if(!svr[1].equalsIgnoreCase("false")){
+						String kv[] = svr[1].split("=");
+						dh.InsertIntoTable(svr[0], kv[0], kv[1]);
+					} else {
+						dh.InsertIntoTable(svr[0], "status" , svr[1] );
+					}
 					fakeFavs.add(new Favorite(svr[0], svr[1]));
 				}
 			}
@@ -178,7 +192,6 @@ public class Overview extends Activity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 	
 	public void setBoolStatus(boolean status){
@@ -222,7 +235,7 @@ public class Overview extends Activity {
 		
 		public void run() {
 			if (reset){
-				new CountDownTimer(10000, 200) {
+				new CountDownTimer(60000, 200) {
 
 				     public void onTick(long millisUntilFinished) {
 				    	 mTimer.setText("Next refresh in: " + 

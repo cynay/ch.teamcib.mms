@@ -1,12 +1,16 @@
 package ch.teamcib.mms.service;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.teamcib.mms.DataHelper;
 import ch.teamcib.mms.TCPSocket;
+import ch.teamcib.mms.gui.Overview;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
@@ -31,7 +35,8 @@ public class NetworkServiceImpl extends Service {
 	private String[] servers = new String[NUMBER_OF_SERVERS];
 //	private Task[] mTasks;
 	private String[] mValues = new String[NUMBER_OF_SERVERS];
-
+	
+	private Context context;
 	private String mData;
 
 	@Override
@@ -48,7 +53,7 @@ public class NetworkServiceImpl extends Service {
 			mData = "";
 			for (String val : mValues){
 				if(val != null)
-					mData += val;
+					mData += val + "&";
 			}
 			return mData;
 		}
@@ -77,8 +82,29 @@ public class NetworkServiceImpl extends Service {
 		
 		for (int i = 0; i < servers.length; i++){
 			Log.i("-> REMOTE SERVICE", "Value: " + servers[i]);
-			if(servers[i] != null)
+			if(servers[i] != null){
+				Log.i("-> REMOTE SERVICE", "Create Task for: " + servers[i]);
 				new Task(servers[i],1337 ,i).start();
+				
+				
+//				try {
+//					Log.i("-> REMOTE SERVICE", "Next create address :" + servers[i]);
+//					InetAddress address = InetAddress.getByName(servers[i]);
+//					Log.i("-> REMOTE SERVICE", "Next isReachable? :" + servers[i]);
+//					if (address.isReachable(2000)){
+//						Log.i("-> REMOTE SERVICE", "Next isReachable = TRUE :" + servers[i]);
+//						new Task(servers[i],1337 ,i).start();
+//					}
+//				} catch (UnknownHostException e) {
+//					// TODO Auto-generated catch block
+//					mValues[i] = servers[i] + ";false";
+//					e.printStackTrace();
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					mValues[i] = servers[i] + ";false";
+//					e.printStackTrace();
+//				}
+			}
 		}
 		
 //		mThread = new Task();
@@ -138,6 +164,7 @@ public class NetworkServiceImpl extends Service {
 			// TODO Auto-generated method stub
 			Log.i("-> REMOTE SERVICE THREAD", "run()");
 			try {
+				
 				mSocket = new TCPSocket(mHost,mPort);
 				
 				mSocket.sendLine("2&hostname&" + mHost);
@@ -158,7 +185,10 @@ public class NetworkServiceImpl extends Service {
 					Log.i("-> SERVER MESSAGE", "Server: \t" + msg);
 					
 					String cmd[] = msg.split("&");
-					mValues[mNumber] = "&" + mHost + ";" + cmd[2];
+					mValues[mNumber] = mHost + ";" + cmd[2];
+					
+					// SAVE TO DB
+					
 					
 				}
 				
