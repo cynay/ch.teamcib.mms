@@ -6,10 +6,28 @@
       android:title="Service">
       
     <CheckBoxPreference
-            android:key="ckb_status"
-            android:defaultValue="false"
-            android:title="Service active: " />
+        android:key="ckb_status"
+        android:defaultValue="false"
+        android:title="Service active: "/>
+            
+    <EditTextPreference
+    	android:key="edt_timer"
+        android:name="EditText Preference"
+        android:summary="This allows you to set the timer"
+        android:defaultValue="60"
+        android:title="Refresh Timer rate (seconds)" />
 
   </PreferenceCategory>
-        
+  
+  <PreferenceCategory
+      android:title="Database">
+      
+      <Preference
+      			android:key="prf_resetDB"
+                android:title="Reset Database"
+                android:summary="Click here to reset the Database!"
+                 />
+                 
+  </PreferenceCategory>
+ 
 </PreferenceScreen>

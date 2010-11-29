@@ -13,6 +13,7 @@
  	<string name="btn_cancel">Cancel</string>
  	<string name="btn_save">Save</string>
  	<string name="btn_refresh">Refresh now!</string>
+ 	<string name="btn_resetDB">Reset DB!</string>
  	
  	<!-- Menu-texts -->
  	<string name="men_add">Add</string>

@@ -103,11 +103,29 @@ public class DataHelper {
 	 * @param para
 	 * @return Cursor
 	 */
-	public Cursor selectCol(String para) {
+	public Cursor selectCol(String hostname) {
 		Log.i("zzzzzzzzzzzzzz", "ENTERCOL");
 		Cursor cursor = this.db.rawQuery(
-				"SELECT date, hostname,key, value FROM tbl_mms WHERE hostname = "
-						+ "'" + para + "'" + " ORDER BY date desc LIMIT 10 ", null);
+				"SELECT date, hostname,key, value FROM tbl_mms WHERE hostname = '"
+						+ hostname + "' ORDER BY date desc LIMIT 10 ", null);
+		
+		Log.i("zzzzzzzzzzzzzz", "EndIN");
+
+		return cursor;
+	}
+	
+	/**
+	 * --USE
+	 * 
+	 * @param para
+	 * @return Cursor
+	 */
+	public Cursor selectHostKey(String hostname, String key) {
+		Log.i("zzzzzzzzzzzzzz", "ENTERCOL");
+		Cursor cursor = this.db.rawQuery(
+				"SELECT date, hostname,key, value FROM tbl_mms WHERE hostname = '"
+						+ hostname + "' AND key = '" + key + "' ORDER BY date desc LIMIT 10 ", null);
+		
 		Log.i("zzzzzzzzzzzzzz", "EndIN");
 
 		return cursor;

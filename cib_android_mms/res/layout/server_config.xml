@@ -51,8 +51,8 @@
     <!-- Used for distance ... -->
     <View
     	android:layout_width="fill_parent"
-        android:layout_height="60dip"
-        android:background="#FFFFFFFF" />
+        android:layout_height="20dip"
+        android:background="#00000000" />
         
    	<LinearLayout
       android:orientation="horizontal"

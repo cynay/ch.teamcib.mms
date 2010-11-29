@@ -65,7 +65,8 @@ class Task implements Runnable{
                     } else if(cmd[0].equals(DATA)){
                     	System.out.println("[*] DATA: " + request);
 //                        socket.sendLine("&pmsg&"+ cmd[3] );
-                        ps.sendData("1&" + mHostname + "&true");
+                    	String data = "mem=" + SystemData.getMemInfo();
+                        ps.sendData("1&" + mHostname + "&" + data);
                     } else if(cmd[0].equals(RQST)) {
                     	System.out.println("[*] RQST: " + request);
                     	
@@ -192,9 +193,9 @@ public class ParallelServer {
      * @param args
      */
     public static void main(String[] args){
-    	GUI.main(null);
+    	GUI.mainGUI();
     	try {
-			Thread.sleep(500); // So the GUI has time to initialize (If not done the first output goes to the console not the gui)
+			Thread.sleep(500); // So the GUI has time to initialize (If not done the first output goes to the console not the GUI)
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -306,6 +307,9 @@ public class ParallelServer {
 
         while(true){
             try{
+            	
+//            	SystemData.printUsage();
+            	SystemData.info();
                 // wait for connection then create streams
                 System.out.println("[*] DEBUG: Wait for new connection");
                 tcpSocket = new TCPSocket(srvSocket.accept());

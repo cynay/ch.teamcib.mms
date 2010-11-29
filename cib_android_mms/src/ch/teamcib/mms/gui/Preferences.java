@@ -1,16 +1,13 @@
 package ch.teamcib.mms.gui;
 
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.os.RemoteException;
 import android.preference.CheckBoxPreference;
 import android.preference.PreferenceActivity;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.util.Log;
 import android.widget.Toast;
 import ch.teamcib.mms.*;
@@ -36,14 +33,30 @@ implements OnSharedPreferenceChangeListener {
 	@Override
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
-
-		this.addPreferencesFromResource(R.layout.preference);
+		addPreferencesFromResource(R.layout.preference);
 
 		// Get a reference to the preferences
 		mServiceStatus = (CheckBoxPreference)getPreferenceScreen()
 			.findPreference(KEY_CKB_STATUS);
 		
 		mServiceStatus.setChecked(false);
+		
+		
+		// on click reset DB		
+		Preference rstDB = (Preference) findPreference("prf_resetDB");
+		rstDB.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+
+			public boolean onPreferenceClick(Preference preference) {
+				DataHelper dh = new DataHelper(getBaseContext());
+				dh.deleteAll();
+				
+				Toast.makeText(getBaseContext(), "Database content deleted!", 
+						Toast.LENGTH_SHORT).show();
+				
+				return true;
+			}
+
+		});
 
 	}
 	
@@ -89,7 +102,7 @@ implements OnSharedPreferenceChangeListener {
 				toastMsg = "Service deactivated";
 				stopService();
 			}
-		}
+		} 
 
 
 		//		mServiceStatus.setSummary(sharedPreferences.getBoolean(key, false) 
@@ -145,4 +158,6 @@ implements OnSharedPreferenceChangeListener {
 //			mStarted = false;
 //		}
 	}
+	
+
 }
