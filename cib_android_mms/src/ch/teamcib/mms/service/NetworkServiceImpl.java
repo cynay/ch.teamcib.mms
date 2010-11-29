@@ -217,11 +217,11 @@ public class NetworkServiceImpl extends Service {
 				
 			} catch (UnknownHostException e) {
 				// TODO Auto-generated catch block
-				mValues[mNumber] = mHost + ";false";
+				mValues[mNumber] = mHost + ";offline";
 				e.printStackTrace();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				mValues[mNumber] = mHost + ";false";
+				mValues[mNumber] = mHost + ";offline";
 				e.printStackTrace();
 			}
 			

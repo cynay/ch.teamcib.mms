@@ -14,7 +14,7 @@
     	android:key="edt_timer"
         android:name="EditText Preference"
         android:summary="This allows you to set the timer"
-        android:defaultValue="60"
+        android:defaultValue="30"
         android:title="Refresh Timer rate (seconds)" />
 
   </PreferenceCategory>

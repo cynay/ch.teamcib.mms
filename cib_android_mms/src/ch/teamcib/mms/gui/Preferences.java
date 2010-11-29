@@ -5,10 +5,12 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.preference.CheckBoxPreference;
+import android.preference.EditTextPreference;
 import android.preference.PreferenceActivity;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.Toast;
 import ch.teamcib.mms.*;
 import ch.teamcib.mms.service.INetworkService;
@@ -24,10 +26,16 @@ import ch.teamcib.mms.service.NetworkServiceImpl;
 public class Preferences extends PreferenceActivity 
 implements OnSharedPreferenceChangeListener {
 
+	// ===========================================================
+    // Finals 
+    // ===========================================================
 	public static final String KEY_CKB_STATUS = "ckb_status";
+	public static final String KEY_EDT_TIMER = "edt_timer";
 
 	private CheckBoxPreference mServiceStatus;
+	private EditTextPreference mRefreshRate;
 	private INetworkService mNetworkService;
+	
 	
 
 	@Override
@@ -38,6 +46,9 @@ implements OnSharedPreferenceChangeListener {
 		// Get a reference to the preferences
 		mServiceStatus = (CheckBoxPreference)getPreferenceScreen()
 			.findPreference(KEY_CKB_STATUS);
+		mRefreshRate = (EditTextPreference)getPreferenceScreen()
+			.findPreference(KEY_EDT_TIMER);
+		
 		
 		mServiceStatus.setChecked(false);
 		
@@ -67,8 +78,8 @@ implements OnSharedPreferenceChangeListener {
 
 		// Set up a listener whenever a key changes            
 		getPreferenceScreen().getSharedPreferences()
-		.registerOnSharedPreferenceChangeListener(this);
-		
+			.registerOnSharedPreferenceChangeListener(this);
+
 		// bind to service
 		NetworkServiceClient.bindSvc(this);
 		Log.i("-> PREFERENCES", "onResume()");
@@ -80,7 +91,7 @@ implements OnSharedPreferenceChangeListener {
 
 		// Unregister the listener whenever a key changes            
 		getPreferenceScreen().getSharedPreferences()
-		.unregisterOnSharedPreferenceChangeListener(this); 
+			.unregisterOnSharedPreferenceChangeListener(this); 
 		
 		// unbind from service
 		NetworkServiceClient.unbindSvc(this);
@@ -102,7 +113,10 @@ implements OnSharedPreferenceChangeListener {
 				toastMsg = "Service deactivated";
 				stopService();
 			}
-		} 
+		} else if (key.equals(KEY_EDT_TIMER)){
+			SharedPreferencesManager.mRefreshRate = mRefreshRate.getText();
+			toastMsg = "Refresh rate changed!";
+		}
 
 
 		//		mServiceStatus.setSummary(sharedPreferences.getBoolean(key, false) 

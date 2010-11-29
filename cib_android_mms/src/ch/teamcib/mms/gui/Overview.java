@@ -8,18 +8,22 @@ import ch.teamcib.mms.R.*;
 import ch.teamcib.mms.service.INetworkService;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -58,9 +62,9 @@ public class Overview extends Activity {
     protected ArrayList<Favorite> fakeFavs = new ArrayList<Favorite>();
 	
 	private INetworkService mNetworkService;
-//	private RefreshTask mThread;
 	private Handler mHandler = new Handler();
 	private TextView mTimer;
+	private long mRefreshRate = 60000;
 
 	private boolean mBoolStatus = true;
 
@@ -70,10 +74,10 @@ public class Overview extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.overview); 
 		
+		// Get the Refresh rate for the timer
 		
         mTimer = (TextView) findViewById(R.id.timer);
         
-//        mNetworkService = NetworkServiceClient.getService();
 
 		// start service
 		NetworkServiceClient.startSvc(this);
@@ -107,6 +111,11 @@ public class Overview extends Activity {
 	protected void onResume() {
 		super.onResume();
 		
+		// get the Refresh rate from the settings
+		mRefreshRate = Long.valueOf(SharedPreferencesManager.mRefreshRate)
+			.longValue() * 1000 ;
+		
+		
 		// bind to service
 		NetworkServiceClient.bindSvc(this);
 		Log.i("-> OVERVIEW", "onResume()");
@@ -118,7 +127,7 @@ public class Overview extends Activity {
 		String[] servers = SharedPreferencesManager.getServers(this);
 		for (int i = 0; i < servers.length; i++){
 			if(servers[i] != null)
-				fakeFavs.add(new Favorite(servers[i],"test"));
+				fakeFavs.add(new Favorite(servers[i],"~"));
 		}
 		
 		refreshFavListItems();
@@ -145,52 +154,74 @@ public class Overview extends Activity {
 	 * @version Android 1.6 >
 	 */
 	public void onClickRefresh(final View sfNormal) {
-//		Toast.makeText(this, "TODO: refresh", Toast.LENGTH_SHORT).show();
-		updateServers();		
-		
+		new ServerUpdater().execute((Void)null);
 	}
 	
-	private void updateServers(){
-		try {
-			mNetworkService = NetworkServiceClient.getService();
-			mNetworkService.setServers(SharedPreferencesManager.getServers(this));
-			mNetworkService.startService();
-			Thread.sleep(4000);
-			String data = mNetworkService.getData();
-			Log.i("-> OVERVIEW", data );
-			
-			DataHelper dh = new DataHelper(this);
-			
-			
-			
-			
-			String servers[] = data.split("&");
-			
-			fakeFavs.clear();
-			
-			/* refresh items for the list the listview  */
-			for (int i = 0; i < servers.length; i++){
-				if(servers[i] != null){
-					String svr[] = servers[i].split(";");
-					if(!svr[1].equalsIgnoreCase("false")){
-						String kv[] = svr[1].split("=");
-						dh.InsertIntoTable(svr[0], kv[0], kv[1]);
-					} else {
-						dh.InsertIntoTable(svr[0], "status" , svr[1] );
+	private class ServerUpdater extends AsyncTask<Void, Void, Void>  {
+		private ProgressDialog	pd	= null;
+		private final Context	c	= Overview.this;
+		
+		protected void onPreExecute(){
+			pd = ProgressDialog.show(c, "Working", "Refreshing servers ...", 
+					true, false);
+		}
+		
+		protected void onPostExecute(Void result){
+			try {
+				String data = mNetworkService.getData();
+				Log.i("-> OVERVIEW", data );
+
+				DataHelper dh = new DataHelper(c);
+
+				String servers[] = data.split("&");
+
+				fakeFavs.clear();
+
+				
+				/* refresh items for the list the listview  */
+				for (int i = 0; i < servers.length; i++){
+					if(servers[i] != null){
+						String svr[] = servers[i].split(";");
+						if(!svr[1].equalsIgnoreCase("offline")){
+							String kv[] = svr[1].split("=");
+							dh.InsertIntoTable(svr[0], kv[0], kv[1]);
+							fakeFavs.add(new Favorite(svr[0], "online"));
+						} else {
+							dh.InsertIntoTable(svr[0], "status" , svr[1] );
+							fakeFavs.add(new Favorite(svr[0], "offline"));
+						}
 					}
-					fakeFavs.add(new Favorite(svr[0], svr[1]));
 				}
+
+				refreshFavListItems();
+
+
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+			
+			pd.dismiss();
+		}
+		
+		@Override
+		protected Void doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			try {
+				mNetworkService = NetworkServiceClient.getService();
+				mNetworkService.setServers(SharedPreferencesManager.getServers(c));
+				mNetworkService.startService();
+				
+				Thread.sleep(4000);
+
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			
-			refreshFavListItems();
-			
-			
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return null;
 		}
 	}
 	
@@ -235,36 +266,53 @@ public class Overview extends Activity {
 		
 		public void run() {
 			if (reset){
-				new CountDownTimer(60000, 200) {
+				new CountDownTimer(mRefreshRate, 200) {
 
-				     public void onTick(long millisUntilFinished) {
-				    	 mTimer.setText("Next refresh in: " + 
-				    			 millisUntilFinished / 1000);
-				     }
+					public void onTick(long millisUntilFinished) {
+						mTimer.setText("Next refresh in  " + 
+								formatTime( millisUntilFinished ));
+					}
 
-				     public void onFinish() {
-//				    	 try {
-//							bStat = ( mNetworkService.getData().equalsIgnoreCase("true") ? true : false);
-//							
-//						} catch (RemoteException e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						}
-				    	 
-				    	 
-				    	 if (mBoolStatus){
-				    		 	mBoolStatus = false;
-							} else {
-								mBoolStatus = true;
-							}
-				         reset = true;
-				     }
-				  }.start();
-				  reset = false;
+					public void onFinish() {				    	 
+
+						if (mBoolStatus){
+							mBoolStatus = false;
+						} else {
+							mBoolStatus = true;
+						}
+						reset = true;
+					}
+				}.start();
+				reset = false;
 			}
 
 			mHandler.postDelayed(this, 200);
 		}
+
+		private String formatTime(long millis) {
+			  String output = "00:00:00";
+			  long seconds = millis / 1000;
+			  long minutes = seconds / 60;
+			  long hours = minutes / 60;
+
+			  seconds = seconds % 60;
+			  minutes = minutes % 60;
+			  hours = hours % 60;
+
+			  String secondsD = String.valueOf(seconds);
+			  String minutesD = String.valueOf(minutes);
+			  String hoursD = String.valueOf(hours); 
+
+			  if (seconds < 10)
+			    secondsD = "0" + seconds;
+			  if (minutes < 10)
+			    minutesD = "0" + minutes;
+			  if (hours < 10)
+			    hoursD = "0" + hours;
+
+			  output = hoursD + ":" + minutesD + ":" + secondsD;
+			  return output;
+			}
 	};	
 
 
@@ -310,7 +358,7 @@ public class Overview extends Activity {
 //			EditText srvName = (EditText)dia.findViewById(R.id.txt_password);
 
 			Bundle bun = new Bundle();
-			bun.putString("key", favContexted.toString());
+			bun.putString("key", favContexted.getName());
 			
 			i.setClass(this, ServerConfig.class);
 			i.putExtras(bun);						
@@ -352,6 +400,10 @@ public class Overview extends Activity {
 		/** The ListView is going to display the toString() return-value! */
 		public String toString() {
 			return name + " [" + status + "]";
+		}
+		
+		public String getName(){
+			return name;
 		}
 
 		public boolean equals(Object o) {

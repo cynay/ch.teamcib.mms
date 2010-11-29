@@ -15,6 +15,7 @@ import ch.teamcib.mms.*;
  *
  */
 public class ServerConfig extends Activity {
+	private String mOldName = null;
 	
 	/**
 	 * called when clickt on button 'cancel'.
@@ -46,6 +47,9 @@ public class ServerConfig extends Activity {
 		Editable txt = et.getText();
 		String hostname = txt.toString();
 		
+		if (mOldName != null){
+			SharedPreferencesManager.removeServer(this, mOldName);
+		}
 		SharedPreferencesManager.addServer(this, hostname, "1337");
 
 		Toast.makeText(this, "Server saved!", Toast.LENGTH_SHORT).show();
@@ -64,6 +68,7 @@ public class ServerConfig extends Activity {
 //			String srvName = getIntent().getExtras().getString("server");
 			EditText edt_hostname = (EditText)findViewById(R.id.edt_hostname);
 			edt_hostname.setText(srvName);
+			mOldName = srvName;
 		
 		} catch (Exception e){
 			// TODO

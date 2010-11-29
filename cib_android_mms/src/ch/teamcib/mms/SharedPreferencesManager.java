@@ -36,6 +36,7 @@ public class SharedPreferencesManager {
     // Members
     // ===========================================================
 	private static HashMap<String, String> mServers = new HashMap<String, String>();
+	public static String mRefreshRate = "20";
 
 	/**
 	 * 
