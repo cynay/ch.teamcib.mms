@@ -1,12 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
-    
-	<TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Here comes the detail view of this server :" />
-    
+	android:orientation="vertical" 
+	android:background="#000000"
+	android:layout_width="fill_parent" 
+	android:layout_height="fill_parent" >
+	<ScrollView
+	android:layout_width="fill_parent" 
+	android:layout_height="fill_parent" >
+	
+	<LinearLayout	android:orientation="vertical" 
+	android:background="#000000"
+	android:layout_width="fill_parent" 
+	android:layout_height="fill_parent" >
+	
+	 <View
+        android:layout_height="5dip"
+        android:layout_width="fill_parent"
+        android:background="#000000" />
+	<View
+        android:layout_height="2dip"
+        android:layout_width="fill_parent"
+        android:background="#00ee76" />
+
+	<TextView android:id="@+id/servername" 
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content" 
+		android:textColor="#458b74"
+		android:background="#000000" 
+		android:text="Detailview of Server:" />
+	<View
+        android:layout_height="5dip"
+        android:layout_width="fill_parent"
+        android:background="#000000" />
+	<View
+        android:layout_height="2dip"
+        android:layout_width="fill_parent"
+        android:background="#00ee76" />
+	
+	<TextView android:id="@+id/out_text" 
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content" 
+		android:textColor="#458b74"
+		android:background="#000000" 
+		android:text="Here comes the detail view of this server :" />
+
+	 <View
+        android:layout_height="2dip"
+        android:layout_width="fill_parent"
+        android:background="#00ff00" />
+     <View
+        android:layout_height="5dip"
+        android:layout_width="fill_parent"
+        android:background="#000000" />
+
+	<Button  android:id="@+id/bt_diagram" 
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content" 
+		android:text="button text"
+		android:onClick="btDiagram"/>
+		
+		</LinearLayout>
+	</ScrollView>
+
 </LinearLayout>

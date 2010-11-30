@@ -30,12 +30,19 @@ public class SharedPreferencesManager {
     // Finals
     // ===========================================================
 	private static final String SERVER_LIST = "hm_servers";
+	private static final String APP_CONFIG  = "hm_app";
+	
+	public static final String KEY_REFRESHRATE   = "key_RefreshRate";
+	public static final String KEY_FIRSTRUN	  = "key_FirstRun";
+	public static final String KEY_SERVICESTATUS = "key_ServiceStatus";
+	
 	private static final int NUMBER_OF_SERVERS = 12;
 	
 	// ===========================================================
     // Members
     // ===========================================================
 	private static HashMap<String, String> mServers = new HashMap<String, String>();
+	
 	public static String mRefreshRate = "20";
 
 	/**
@@ -69,6 +76,58 @@ public class SharedPreferencesManager {
 		keyValuesEditor.commit();
 	}
 	
+	public static void addConfigValue(Context c, String key, boolean value){
+		SharedPreferences keyValues = c.getSharedPreferences(APP_CONFIG, 
+				Context.MODE_PRIVATE);
+		
+		SharedPreferences.Editor keyValuesEditor = keyValues.edit();
+		keyValuesEditor.putBoolean(key, value);
+		
+		keyValuesEditor.commit();
+	}
+	
+	public static void addConfigValueLong(Context c, String key, long value){
+		SharedPreferences keyValues = c.getSharedPreferences(APP_CONFIG, 
+				Context.MODE_PRIVATE);
+		
+		SharedPreferences.Editor keyValuesEditor = keyValues.edit();
+		keyValuesEditor.putLong(key, value);
+		
+		keyValuesEditor.commit();
+	}
+	
+	public static boolean getConfigValue(Context c, String key){
+		SharedPreferences keyValues = c.getSharedPreferences(APP_CONFIG, 
+				Context.MODE_PRIVATE);
+		
+		return keyValues.getBoolean(key, false);
+	}
+	
+	public static long getConfigValueLong(Context c, String key){
+		SharedPreferences keyValues = c.getSharedPreferences(APP_CONFIG, 
+				Context.MODE_PRIVATE);
+		
+		return keyValues.getLong(key, 60000);
+	}
+	
+	public static boolean getFirstRun(Context c){
+		boolean firstRun = false;
+		SharedPreferences keyValues = c.getSharedPreferences(APP_CONFIG, 
+				Context.MODE_PRIVATE);
+		
+		if (keyValues.getBoolean(KEY_FIRSTRUN, true) == true ){
+			SharedPreferences.Editor keyValuesEditor = keyValues.edit();
+			// Set the default values for first run
+			keyValuesEditor.putBoolean(KEY_FIRSTRUN, false);
+			keyValuesEditor.putLong(KEY_REFRESHRATE, 60000);
+			keyValuesEditor.putBoolean(KEY_SERVICESTATUS, false);
+			
+			keyValuesEditor.commit();
+			firstRun = true;
+		}
+		
+		return firstRun;
+	}
 
 	@SuppressWarnings("unchecked")
 	public static String[] getServers(Context c){

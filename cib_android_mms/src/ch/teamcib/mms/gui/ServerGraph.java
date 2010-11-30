@@ -9,12 +9,12 @@ import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class ServerDetail extends Activity {
+public class ServerGraph extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.server_detail); 
+//		setContentView(R.layout.server_detail); 
 		
 		DataHelper dh = new DataHelper(getBaseContext());
 		Cursor cur = dh.selectHostKey("caffein.ch", "mem");

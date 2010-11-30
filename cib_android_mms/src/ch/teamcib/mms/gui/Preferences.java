@@ -107,14 +107,22 @@ implements OnSharedPreferenceChangeListener {
 		if (key.equals(KEY_CKB_STATUS)) {
 			boolean checked = sharedPreferences.getBoolean(key, false);
 			if (checked){
-				toastMsg = "Service activated";
+				SharedPreferencesManager.addConfigValue(this, 
+						SharedPreferencesManager.KEY_SERVICESTATUS, true);
+				
 				startService();
+				toastMsg = "Service activated";
 			} else if (!checked) {
-				toastMsg = "Service deactivated";
+				SharedPreferencesManager.addConfigValue(this, 
+						SharedPreferencesManager.KEY_SERVICESTATUS, false);
+				
 				stopService();
+				toastMsg = "Service deactivated";
 			}
 		} else if (key.equals(KEY_EDT_TIMER)){
-			SharedPreferencesManager.mRefreshRate = mRefreshRate.getText();
+			SharedPreferencesManager.addConfigValueLong(this, "RefreshRate", 
+				Long.valueOf(mRefreshRate.getText()).longValue() * 1000);
+			
 			toastMsg = "Refresh rate changed!";
 		}
 

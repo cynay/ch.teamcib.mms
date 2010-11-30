@@ -77,8 +77,8 @@ public class Overview extends Activity {
 		// Get the Refresh rate for the timer
 		
         mTimer = (TextView) findViewById(R.id.timer);
+ 
         
-
 		// start service
 		NetworkServiceClient.startSvc(this);
 
@@ -92,7 +92,24 @@ public class Overview extends Activity {
         mFavList.setOnItemClickListener(new OnItemClickListener() {
         	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, 
         			long arg3) {
-        		startActivity(new Intent(arg1.getContext(), ServerDetail.class));
+
+        		Favorite favContexted;
+        		/* Get the selected item out of the Adapter by its position. */
+    			favContexted = (Favorite) mFavList.getAdapter().getItem(arg2);
+        		
+    			Intent i = new Intent();
+
+        		i.putExtra("host", favContexted.getName() );
+        		
+//    			Bundle bun = new Bundle();
+//    			bun.putString("key", favContexted.getName());
+    			
+    			i.setClass(getBaseContext(), ServerDetail.class);
+//    			i.putExtras(bun);						
+
+    			startActivity(i);
+        		
+//        		startActivity(new Intent(arg1.getContext(), ServerDetail.class));
         	}
         });
 
@@ -354,8 +371,6 @@ public class Overview extends Activity {
 			
 			// TODO open the edit activity
 			Intent i = new Intent();
-//			Dialog dia = (Dialog) dialog;
-//			EditText srvName = (EditText)dia.findViewById(R.id.txt_password);
 
 			Bundle bun = new Bundle();
 			bun.putString("key", favContexted.getName());
@@ -364,8 +379,6 @@ public class Overview extends Activity {
 			i.putExtras(bun);						
 
 			startActivity(i);
-			
-//			startActivity(new Intent(this, ServerConfig.class));
 
 			refreshFavListItems();
 			return true; /* true means: "we handled the event". */
