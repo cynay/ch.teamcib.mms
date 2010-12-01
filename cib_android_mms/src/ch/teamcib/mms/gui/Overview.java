@@ -1,6 +1,11 @@
 package ch.teamcib.mms.gui;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import ch.teamcib.mms.*;
@@ -58,58 +63,45 @@ public class Overview extends Activity {
     // ===========================================================
     // Members
     // ===========================================================
-    protected ListView mFavList;
-    protected ArrayList<Favorite> fakeFavs = new ArrayList<Favorite>();
+    protected ListView mSrvList;
+    protected ArrayList<Server> mServers = new ArrayList<Server>();
 	
 	private INetworkService mNetworkService;
 	private Handler mHandler = new Handler();
 	private TextView mTimer;
 	private long mRefreshRate = 60000;
 
-	private boolean mBoolStatus = true;
 
-	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.overview); 
 		
-		// Get the Refresh rate for the timer
-		
-        mTimer = (TextView) findViewById(R.id.timer);
+		mTimer = (TextView) findViewById(R.id.timer);
  
+		// Set default data if its firstrun
+		if (SharedPreferencesManager.getFirstRun(this) == true)
+			Toast.makeText(this, "Enjoy this app!", Toast.LENGTH_LONG).show();
         
 		// start service
-		NetworkServiceClient.startSvc(this);
+//		NetworkServiceClient.startSvc(this);
 
-		// NEW //
-		
-//		SharedPreferencesManager.setServers(this); //TODO remove after testing
-
-        this.mFavList = (ListView) this.findViewById(R.id.list_servers);
+        mSrvList = (ListView) findViewById(R.id.list_servers);
         
         // this triggers the detail view of an Item in the List with a Click 
-        mFavList.setOnItemClickListener(new OnItemClickListener() {
+        mSrvList.setOnItemClickListener(new OnItemClickListener() {
         	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, 
         			long arg3) {
 
-        		Favorite favContexted;
+        		Server srvContexted;
         		/* Get the selected item out of the Adapter by its position. */
-    			favContexted = (Favorite) mFavList.getAdapter().getItem(arg2);
+    			srvContexted = (Server) mSrvList.getAdapter().getItem(arg2);
         		
+    			// Create an Intent with the Hostname added to extras
     			Intent i = new Intent();
-
-        		i.putExtra("host", favContexted.getName() );
-        		
-//    			Bundle bun = new Bundle();
-//    			bun.putString("key", favContexted.getName());
-    			
+        		i.putExtra("host", srvContexted.getName() );    			
     			i.setClass(getBaseContext(), ServerDetail.class);
-//    			i.putExtras(bun);						
-
     			startActivity(i);
-        		
-//        		startActivity(new Intent(arg1.getContext(), ServerDetail.class));
         	}
         });
 
@@ -120,31 +112,31 @@ public class Overview extends Activity {
 
 		mHandler.removeCallbacks(mUpdateTimeTask);
         mHandler.postDelayed(mUpdateTimeTask, 100);
-	
 	}
 	
 	
 	@Override
 	protected void onResume() {
 		super.onResume();
+		Log.i("-> OVERVIEW", "onResume()");
 		
 		// get the Refresh rate from the settings
-		mRefreshRate = Long.valueOf(SharedPreferencesManager.mRefreshRate)
-			.longValue() * 1000 ;
+		mRefreshRate = SharedPreferencesManager.getConfigValueLong(this, 
+				SharedPreferencesManager.KEY_REFRESHRATE);
 		
-		
-		// bind to service
+		// if service is started bind to service
 		NetworkServiceClient.bindSvc(this);
-		Log.i("-> OVERVIEW", "onResume()");
-//		mNetworkService = NetworkServiceClient.getService();
-		
-		fakeFavs.clear();
+//		if (SharedPreferencesManager.getConfigValue(this, 
+//				SharedPreferencesManager.KEY_SERVICESTATUS) == true){
+//			NetworkServiceClient.bindSvc(this);
+//		}
 		
 		/* refresh items for the list the listview  */
+		mServers.clear();
 		String[] servers = SharedPreferencesManager.getServers(this);
 		for (int i = 0; i < servers.length; i++){
 			if(servers[i] != null)
-				fakeFavs.add(new Favorite(servers[i],"~"));
+				mServers.add(new Server(servers[i],"~"));
 		}
 		
 		refreshFavListItems();
@@ -154,10 +146,14 @@ public class Overview extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		
-		// unbind from service
-		NetworkServiceClient.unbindSvc(this);
 		Log.i("-> OVERVIEW", "onPause()");
+		
+		// if service is started unbind from service
+		NetworkServiceClient.unbindSvc(this);
+//		if (SharedPreferencesManager.getConfigValue(this, 
+//				SharedPreferencesManager.KEY_SERVICESTATUS) == true){
+//			NetworkServiceClient.unbindSvc(this);
+//		}		
 	}
 	
 	/**
@@ -179,7 +175,7 @@ public class Overview extends Activity {
 		private final Context	c	= Overview.this;
 		
 		protected void onPreExecute(){
-			pd = ProgressDialog.show(c, "Working", "Refreshing servers ...", 
+			pd = ProgressDialog.show(c, "Working", "Refreshing servers status ...", 
 					true, false);
 		}
 		
@@ -192,7 +188,7 @@ public class Overview extends Activity {
 
 				String servers[] = data.split("&");
 
-				fakeFavs.clear();
+				mServers.clear();
 
 				
 				/* refresh items for the list the listview  */
@@ -201,17 +197,16 @@ public class Overview extends Activity {
 						String svr[] = servers[i].split(";");
 						if(!svr[1].equalsIgnoreCase("offline")){
 							String kv[] = svr[1].split("=");
-							dh.InsertIntoTable(svr[0], kv[0], kv[1]);
-							fakeFavs.add(new Favorite(svr[0], "online"));
+							//	dh.InsertIntoTable(svr[0], kv[0], kv[1]);
+							mServers.add(new Server(svr[0], "online"));
 						} else {
-							dh.InsertIntoTable(svr[0], "status" , svr[1] );
-							fakeFavs.add(new Favorite(svr[0], "offline"));
-						}
+							//	dh.InsertIntoTable(svr[0], "status" , svr[1] );
+							mServers.add(new Server(svr[0], "offline"));
+						} 
 					}
 				}
 
 				refreshFavListItems();
-
 
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
@@ -227,23 +222,18 @@ public class Overview extends Activity {
 			try {
 				mNetworkService = NetworkServiceClient.getService();
 				mNetworkService.setServers(SharedPreferencesManager.getServers(c));
-				mNetworkService.startService();
+				mNetworkService.singleRefresh();
 				
-				Thread.sleep(4000);
+				while(!mNetworkService.isRefreshed()){
+					Thread.sleep(2000);
+				}
 
-			} catch (RemoteException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+				Log.e("-> ERROR OVERVIEW", e.getMessage());
+			} 
 			return null;
 		}
-	}
-	
-	public void setBoolStatus(boolean status){
-		this.mBoolStatus = status;
 	}
 	
 
@@ -292,11 +282,6 @@ public class Overview extends Activity {
 
 					public void onFinish() {				    	 
 
-						if (mBoolStatus){
-							mBoolStatus = false;
-						} else {
-							mBoolStatus = true;
-						}
 						reset = true;
 					}
 				}.start();
@@ -335,8 +320,8 @@ public class Overview extends Activity {
 
 	// NEW
 	private void refreshFavListItems() {
-		mFavList.setAdapter(new ArrayAdapter<Favorite>(this, 
-				android.R.layout.simple_list_item_1, fakeFavs));
+		mSrvList.setAdapter(new ArrayAdapter<Server>(this, 
+				android.R.layout.simple_list_item_1, mServers));
 	}
 
 	private void initListView() {
@@ -344,7 +329,7 @@ public class Overview extends Activity {
 		refreshFavListItems();
 
 		/* Add Context-Menu listener to the ListView. */
-		mFavList.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
+		mSrvList.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
 			 
             public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
             	menu.setHeaderTitle("Context Menu");
@@ -361,13 +346,13 @@ public class Overview extends Activity {
 	@Override
 	public boolean onContextItemSelected(MenuItem aItem) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) aItem.getMenuInfo();
-		Favorite favContexted;
+		Server favContexted;
 			
 		/* Switch on the ID of the item, to get what the user selected. */
 		switch (aItem.getItemId()) {
 		case CONTEXTMENU_EDITITEM:
 			/* Get the selected item out of the Adapter by its position. */
-			favContexted = (Favorite) mFavList.getAdapter().getItem(info.position);
+			favContexted = (Server) mSrvList.getAdapter().getItem(info.position);
 			
 			// TODO open the edit activity
 			Intent i = new Intent();
@@ -385,10 +370,10 @@ public class Overview extends Activity {
 			
 		case CONTEXTMENU_DELETEITEM:
 			/* Get the selected item out of the Adapter by its position. */
-			favContexted = (Favorite) mFavList.getAdapter().getItem(info.position);
+			favContexted = (Server) mSrvList.getAdapter().getItem(info.position);
 			/* Remove it from the list.*/
 			SharedPreferencesManager.removeServer(this, favContexted.name);
-			fakeFavs.remove(favContexted);
+			mServers.remove(favContexted);
 
 			refreshFavListItems();
 			return true; /* true means: "we handled the event". */
@@ -399,28 +384,45 @@ public class Overview extends Activity {
 	// ===========================================================
     // Inner and Anonymous Classes
     // ===========================================================
-    /** Small class holding some basic */
-	protected class Favorite {
+    /** 
+     * Small class holding some basics Serverinfos
+     */
+	protected class Server {
 
 		protected String name;
 		protected String status;
 
-		protected Favorite(String name, String status) {
+		/**
+		 * Creates a Server object 
+		 * 
+		 * @param name	The Hostname (or IP-address) of the Server
+		 * @param status The status of the Server as String
+		 */
+		protected Server(String name, String status) {
 			this.name = name;
 			this.status = status;
 		}
 
-		/** The ListView is going to display the toString() return-value! */
+		/** 
+		 * The ListView is going to display the toString() return-value! 
+		 * 
+		 * @return a String with the Server name and status.
+		 */
 		public String toString() {
 			return name + " [" + status + "]";
 		}
 		
+		/**
+		 * Returns the name of the Server
+		 * @return name of the Server 
+		 */
 		public String getName(){
 			return name;
 		}
 
-		public boolean equals(Object o) {
-			return o instanceof Favorite && ((Favorite) o).name.compareTo(name) == 0;
-		}
+
+//		public boolean equals(Object o) {
+//			return o instanceof Server && ((Server) o).name.compareTo(name) == 0;
+//		}
 	}
 }

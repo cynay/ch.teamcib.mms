@@ -41,7 +41,7 @@ public class SharedPreferencesManager {
 	// ===========================================================
     // Members
     // ===========================================================
-	private static HashMap<String, String> mServers = new HashMap<String, String>();
+	private static HashMap<String, Integer> mServers = new HashMap<String, Integer>();
 	
 	public static String mRefreshRate = "20";
 
@@ -51,12 +51,12 @@ public class SharedPreferencesManager {
 	 * @param server	the Server to add
 	 * @param port		the Port for the connection
 	 */
-	public static void addServer(Context c, String server, String port){		
+	public static void addServer(Context c, String server, int port){		
 		SharedPreferences keyValues = c.getSharedPreferences(SERVER_LIST, 
 				Context.MODE_PRIVATE);
 		
 		SharedPreferences.Editor keyValuesEditor = keyValues.edit();
-		keyValuesEditor.putString(server, port);
+		keyValuesEditor.putInt(server, port);
 		
 		keyValuesEditor.commit();
 	}
@@ -117,6 +117,7 @@ public class SharedPreferencesManager {
 		
 		if (keyValues.getBoolean(KEY_FIRSTRUN, true) == true ){
 			SharedPreferences.Editor keyValuesEditor = keyValues.edit();
+			
 			// Set the default values for first run
 			keyValuesEditor.putBoolean(KEY_FIRSTRUN, false);
 			keyValuesEditor.putLong(KEY_REFRESHRATE, 60000);
@@ -128,6 +129,12 @@ public class SharedPreferencesManager {
 		
 		return firstRun;
 	}
+	
+	public static int getServerPort(Context c, String server){
+		SharedPreferences keyValues = c.getSharedPreferences(SERVER_LIST, 
+				Context.MODE_PRIVATE);
+		return keyValues.getInt(server, 1337);
+	}
 
 	@SuppressWarnings("unchecked")
 	public static String[] getServers(Context c){
@@ -135,7 +142,7 @@ public class SharedPreferencesManager {
 		SharedPreferences keyValues = c.getSharedPreferences(SERVER_LIST, 
 				Context.MODE_PRIVATE);
 		
-		HashMap<String, String> hm = (HashMap<String, String>) 
+		HashMap<String, Integer> hm = (HashMap<String, Integer>) 
 			keyValues.getAll();
 		
 		int counter = 0;
@@ -166,10 +173,9 @@ public class SharedPreferencesManager {
 	}
 	
 	public static void setServers(Context c){
-		mServers.put("caffein.ch", "1337");
-		mServers.put("megapanzer.com", "1337");
-		mServers.put("micro$oft.com", "1337");
-		mServers.put("omfg.com", "1337");
+		mServers.put("caffein.ch", 1337);
+		mServers.put("megapanzer.com", 1337);
+		mServers.put("micro$oft.com", 1337);
 		
 		SharedPreferences keyValues = c.getSharedPreferences(SERVER_LIST, 
 				Context.MODE_PRIVATE);
@@ -177,7 +183,7 @@ public class SharedPreferencesManager {
 		SharedPreferences.Editor keyValuesEditor = keyValues.edit();
 		
 		for (String srv : mServers.keySet() ) {
-			keyValuesEditor.putString(srv, mServers.get(srv));
+			keyValuesEditor.putInt(srv, mServers.get(srv));
 		}
 		
 		keyValuesEditor.commit();

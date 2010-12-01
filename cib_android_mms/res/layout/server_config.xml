@@ -11,6 +11,7 @@
     <EditText android:id="@+id/edt_hostname"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:inputType="textUri"
         android:layout_marginLeft="5dp"/>
 
     <View
@@ -26,6 +27,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="1337"
+        android:inputType="number"
         android:layout_marginLeft="5dp"/>
     
     <View
@@ -41,6 +43,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="12:34:56:AB:CD:EF"
+        android:enabled="false"
         android:layout_marginLeft="5dp"/>
 
 	<View

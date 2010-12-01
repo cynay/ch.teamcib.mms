@@ -42,15 +42,17 @@ public class ServerConfig extends Activity {
 	 * @version Android 1.6 >
 	 */
 	public void onClickSave(final View sfNormal) {
-		
 		EditText et = (EditText)findViewById(R.id.edt_hostname);
 		Editable txt = et.getText();
 		String hostname = txt.toString();
+		et = (EditText)findViewById(R.id.edt_port);
+		txt = et.getText();
+		int port = Integer.valueOf(txt.toString()).intValue();
 		
 		if (mOldName != null){
 			SharedPreferencesManager.removeServer(this, mOldName);
 		}
-		SharedPreferencesManager.addServer(this, hostname, "1337");
+		SharedPreferencesManager.addServer(this, hostname, port);
 
 		Toast.makeText(this, "Server saved!", Toast.LENGTH_SHORT).show();
 		this.finish();
@@ -62,17 +64,21 @@ public class ServerConfig extends Activity {
 		setContentView(R.layout.server_config); 
 		
 		try {
-//			Toast.makeText(this, savedInstanceState.getString("key") , Toast.LENGTH_SHORT).show();
 			Bundle bun = getIntent().getExtras();
 			String srvName = bun.getString("key");
 //			String srvName = getIntent().getExtras().getString("server");
 			EditText edt_hostname = (EditText)findViewById(R.id.edt_hostname);
 			edt_hostname.setText(srvName);
+			
+			EditText edt_port = (EditText)findViewById(R.id.edt_port);
+			edt_port.setText(String.valueOf(SharedPreferencesManager.
+					getServerPort(this, srvName)));
+			
 			mOldName = srvName;
 		
 		} catch (Exception e){
 			// TODO
-			Toast.makeText(this, "ERROR:" + e.getMessage() , Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "ERROR: " + e.getMessage() , Toast.LENGTH_SHORT).show();
 		}			
 	}
 }

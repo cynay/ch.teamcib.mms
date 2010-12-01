@@ -38,11 +38,12 @@ public class DataHelper {
 		Calendar cal = Calendar.getInstance();
 	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String date = sdf.format(cal.getTime());
-		Log.i("zzzzzzzzzzzzzz", "NewIN");
+		
 		this.db.execSQL("INSERT INTO " + TABLE_NAME
 				+ " (date,hostname, key, value)" + " VALUES ('" + date
 				+ "' , '" + hostname + "' , '" + key + "' , '" + value + "');");
-		Log.i("zzzzzzzzzzzzzz", "EndIN");
+		
+		Log.i("-> DATAHELPER", "InsertIntoTable (done): " + hostname + key + value);
 	}
 
 	/**
@@ -76,9 +77,8 @@ public class DataHelper {
 	 * @param rowId
 	 */
 	public void deleteRow(Integer rowId) {
-		Log.i("zzzzzzzzzzzzzz", "startRowDelete");
 		db.delete(TABLE_NAME, "_id=" + rowId, null);
-		Log.i("zzzzzzzzzzzzzz", "endRowDelete");
+		Log.i("-> DATAHELPER", "deleteRow (done): " + rowId);
 	}
 
 	/**
@@ -92,7 +92,8 @@ public class DataHelper {
 				.rawQuery(
 						"SELECT date, hostname,key, value FROM tbl_mms ORDER BY date desc LIMIT 20",
 						null);
-		Log.i("zzzzzzzzzzzzzz", "EndIN");
+		
+		Log.i("-> DATAHELPER", "selectTable()");
 
 		return cursor;
 	}
@@ -104,12 +105,12 @@ public class DataHelper {
 	 * @return Cursor
 	 */
 	public Cursor selectCol(String hostname) {
-		Log.i("zzzzzzzzzzzzzz", "ENTERCOL");
+		Log.i("-> DATAHELPER", "ENTERCOL");
 		Cursor cursor = this.db.rawQuery(
 				"SELECT date, hostname,key, value FROM tbl_mms WHERE hostname = '"
 						+ hostname + "' ORDER BY date desc LIMIT 10 ", null);
 		
-		Log.i("zzzzzzzzzzzzzz", "EndIN");
+		Log.i("-> DATAHELPER", "selectCol: " + hostname);
 
 		return cursor;
 	}
@@ -121,14 +122,18 @@ public class DataHelper {
 	 * @return Cursor
 	 */
 	public Cursor selectHostKey(String hostname, String key) {
-		Log.i("zzzzzzzzzzzzzz", "ENTERCOL");
 		Cursor cursor = this.db.rawQuery(
 				"SELECT date, hostname,key, value FROM tbl_mms WHERE hostname = '"
 						+ hostname + "' AND key = '" + key + "' ORDER BY date desc LIMIT 10 ", null);
 		
-		Log.i("zzzzzzzzzzzzzz", "EndIN");
+		Log.i("-> DATAHELPER", "selectHostKey: " + hostname + key);
 
 		return cursor;
+	}
+	
+	public void closeDB (){
+		db.close();
+		Log.i("-> DATAHELPER", "! closeDB()" );
 	}
 
 	private static class OpenHelper extends SQLiteOpenHelper {
@@ -156,7 +161,7 @@ public class DataHelper {
 		 */
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			Log.w("Example",
+			Log.w("-> DATAHELPER",
 					"Upgrading database, this will drop tables and recreate.");
 			db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
 			// db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME2);
