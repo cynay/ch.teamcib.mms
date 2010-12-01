@@ -42,12 +42,13 @@ class Task implements Runnable{
      */
     public void run(){
         String request;
+        boolean isConnected = true;
 
         // execute client requests
         try{
             System.out.println("[*] DEBUG: new client connected");
 
-            while(true){
+            while(isConnected){
                 request = socket.receiveLine();
 
                 if(request != null){
@@ -55,18 +56,20 @@ class Task implements Runnable{
 
                     String cmd[] = request.split("&");
 
-//                    System.out.println(cmd[0]);
-//                    System.out.println(cmd[1]);
-//                    System.out.println(cmd[2]);
-
                     if(cmd[0].equals(INFO)){
                     	System.out.println("[*] INFO: " + request);
-//                        ps.newMessage(request);
+
                     } else if(cmd[0].equals(DATA)){
                     	System.out.println("[*] DATA: " + request);
-//                        socket.sendLine("&pmsg&"+ cmd[3] );
                     	String data = "mem=" + SystemData.getMemInfo();
-                        ps.sendData("1&" + mHostname + "&" + data);
+                    	
+                    	// process running ?                    	
+                		String process = ("calc.exe=" + 
+                			(SystemData.isRunning("calc.exe") ? "running" : "down"));
+                    	
+                		System.out.println("[*] DATA-STRING:  1&" + mHostname + "&" + data + ";" + process);
+                		
+                        ps.sendData("1&" + mHostname + "&" + data + ";" + process);
                     } else if(cmd[0].equals(RQST)) {
                     	System.out.println("[*] RQST: " + request);
                     	
@@ -75,6 +78,7 @@ class Task implements Runnable{
                             ps.addHost(mHostname);
                         } else if (cmd[1].equals("exit")) {
                             ps.removeHost(mHostname);
+                            isConnected = false;
                         } 
                     } else {
                         System.out.println("[*] ERROR: no valid command string");
@@ -83,14 +87,18 @@ class Task implements Runnable{
                 } else {
                     break;
                 }
+                
             }
         } catch(Exception e) {
+        	System.out.println("[*] ERROR: exception in while()...");
             System.out.println(e);
         }
 
+        // close the socket
         try{
             socket.close();
         } catch (IOException e) {
+        	System.out.println("[*] ERROR: exception in the socket.close() method...");
             System.out.println(e);
         }
     }

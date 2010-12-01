@@ -20,9 +20,9 @@ import oshi.util.FormatUtil;
 
 public class SystemData {
 	public SystemData() { 
-		boolean result = SystemData.isRunning("TextPad.exe");
+		boolean result = SystemData.isRunning("calc.exe");
 
-		System.out.println("Is TextPad running ?  " + (result ? " Yes" : "No"));
+		System.out.println("Is Calculator running ?  " + (result ? " Yes" : "No"));
 	}
 
 	public static boolean isRunning(String process) {
@@ -79,18 +79,18 @@ public class SystemData {
 		System.out.println(os);
 
 		HardwareAbstractionLayer hal = si.getHardware();
-		System.out.println(hal.getProcessors().length + " CPU(s):");
+//		System.out.println(hal.getProcessors().length + " CPU(s):");
 
-		for(Processor cpu : hal.getProcessors()) {
-			System.out.println(" " + cpu);
-		}
+//		for(Processor cpu : hal.getProcessors()) {
+//			System.out.println(" " + cpu);
+//		}
 
 		System.out.println("Memory: " + 
 				FormatUtil.formatBytes(hal.getMemory().getAvailable()) + "/" + 
 				FormatUtil.formatBytes(hal.getMemory().getTotal()));
-		System.out.println("Memory: " + 
-				(hal.getMemory().getAvailable()) / 1048576 + "/" + 
-				hal.getMemory().getTotal());
+//		System.out.println("Memory: " + 
+//				(hal.getMemory().getAvailable()) / 1048576 + "/" + 
+//				hal.getMemory().getTotal());
 	}
 
 

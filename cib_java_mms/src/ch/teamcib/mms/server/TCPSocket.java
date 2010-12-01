@@ -11,6 +11,8 @@ import java.net.*;
  */
 public class TCPSocket {
 
+//	private final int TIMEOUT = 1000;
+	
     private Socket socket;
     private BufferedReader istream;
     private BufferedWriter ostream;
@@ -19,11 +21,13 @@ public class TCPSocket {
         throws UnknownHostException, IOException{
         
         socket = new Socket(srvAddress, srvPort);
+//        socket.setSoTimeout(TIMEOUT);
         initializeStreams();        
     }
     
     public TCPSocket(Socket socket) throws IOException{
         this.socket = socket;
+//        socket.setSoTimeout(TIMEOUT);
         initializeStreams();
     }
     
