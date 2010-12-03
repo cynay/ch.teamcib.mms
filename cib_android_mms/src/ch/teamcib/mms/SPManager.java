@@ -25,7 +25,7 @@ import ch.teamcib.mms.service.NetworkServiceImpl;
  * @author Yannic Schneider
  *
  */
-public class SharedPreferencesManager {
+public class SPManager {
 	// ===========================================================
     // Finals
     // ===========================================================
@@ -33,7 +33,7 @@ public class SharedPreferencesManager {
 	private static final String APP_CONFIG  = "hm_app";
 	
 	public static final String KEY_REFRESHRATE   = "key_RefreshRate";
-	public static final String KEY_FIRSTRUN	  = "key_FirstRun";
+	public static final String KEY_FIRSTRUN	     = "key_FirstRun";
 	public static final String KEY_SERVICESTATUS = "key_ServiceStatus";
 	
 	private static final int NUMBER_OF_SERVERS = 12;
@@ -43,7 +43,8 @@ public class SharedPreferencesManager {
     // ===========================================================
 	private static HashMap<String, Integer> mServers = new HashMap<String, Integer>();
 	
-	public static String mRefreshRate = "20";
+//	public static String mRefreshRate = "20";
+	
 
 	/**
 	 * 

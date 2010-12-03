@@ -67,8 +67,13 @@ public class SystemData {
 	public static String getMemInfo(){
 		SystemInfo si = new SystemInfo();
 		HardwareAbstractionLayer hal = si.getHardware();
-		return (((hal.getMemory().getTotal()) - (hal.getMemory().getAvailable())) 
-				/ 1048576 + "/" + (hal.getMemory().getTotal()) / 1048576);
+		
+		System.out.println("[->] getMemInfo(): " + 
+				(((hal.getMemory().getTotal() - hal.getMemory().getAvailable()) 
+				/ 1048576 ) + "/" + (hal.getMemory().getTotal()) / 1048576) );
+		
+		return (((hal.getMemory().getTotal() - hal.getMemory().getAvailable()) 
+				/ 1048576 ) + "/" + (hal.getMemory().getTotal()) / 1048576);
 	}
 
 
@@ -76,7 +81,7 @@ public class SystemData {
 		SystemInfo si = new SystemInfo();
 
 		OperatingSystem os = si.getOperatingSystem();
-		System.out.println(os);
+		System.out.println("[->] " + os);
 
 		HardwareAbstractionLayer hal = si.getHardware();
 //		System.out.println(hal.getProcessors().length + " CPU(s):");
@@ -85,8 +90,8 @@ public class SystemData {
 //			System.out.println(" " + cpu);
 //		}
 
-		System.out.println("Memory: " + 
-				FormatUtil.formatBytes(hal.getMemory().getAvailable()) + "/" + 
+		System.out.println("[->] Memory: " + 
+				FormatUtil.formatBytes(hal.getMemory().getTotal() - hal.getMemory().getAvailable()) + "/" + 
 				FormatUtil.formatBytes(hal.getMemory().getTotal()));
 //		System.out.println("Memory: " + 
 //				(hal.getMemory().getAvailable()) / 1048576 + "/" + 

@@ -50,9 +50,9 @@ public class ServerConfig extends Activity {
 		int port = Integer.valueOf(txt.toString()).intValue();
 		
 		if (mOldName != null){
-			SharedPreferencesManager.removeServer(this, mOldName);
+			SPManager.removeServer(this, mOldName);
 		}
-		SharedPreferencesManager.addServer(this, hostname, port);
+		SPManager.addServer(this, hostname, port);
 
 		Toast.makeText(this, "Server saved!", Toast.LENGTH_SHORT).show();
 		this.finish();
@@ -71,13 +71,13 @@ public class ServerConfig extends Activity {
 			edt_hostname.setText(srvName);
 			
 			EditText edt_port = (EditText)findViewById(R.id.edt_port);
-			edt_port.setText(String.valueOf(SharedPreferencesManager.
+			edt_port.setText(String.valueOf(SPManager.
 					getServerPort(this, srvName)));
 			
 			mOldName = srvName;
 		
 		} catch (Exception e){
-			// TODO
+			// TODO debug stuff
 			Toast.makeText(this, "ERROR: " + e.getMessage() , Toast.LENGTH_SHORT).show();
 		}			
 	}

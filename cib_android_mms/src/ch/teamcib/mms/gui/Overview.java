@@ -80,7 +80,7 @@ public class Overview extends Activity {
 		mTimer = (TextView) findViewById(R.id.timer);
  
 		// Set default data if its firstrun
-		if (SharedPreferencesManager.getFirstRun(this) == true)
+		if (SPManager.getFirstRun(this) == true)
 			Toast.makeText(this, "Enjoy this app!", Toast.LENGTH_LONG).show();
         
 		// start service
@@ -121,8 +121,8 @@ public class Overview extends Activity {
 		Log.i("-> OVERVIEW", "onResume()");
 		
 		// get the Refresh rate from the settings
-		mRefreshRate = SharedPreferencesManager.getConfigValueLong(this, 
-				SharedPreferencesManager.KEY_REFRESHRATE);
+		mRefreshRate = SPManager.getConfigValueLong(this, 
+				SPManager.KEY_REFRESHRATE);
 		
 		// if service is started bind to service
 		NetworkServiceClient.bindSvc(this);
@@ -133,7 +133,7 @@ public class Overview extends Activity {
 		
 		/* refresh items for the list the listview  */
 		mServers.clear();
-		String[] servers = SharedPreferencesManager.getServers(this);
+		String[] servers = SPManager.getServers(this);
 		for (int i = 0; i < servers.length; i++){
 			if(servers[i] != null)
 				mServers.add(new Server(servers[i],"~"));
@@ -221,11 +221,11 @@ public class Overview extends Activity {
 			// TODO Auto-generated method stub
 			try {
 				mNetworkService = NetworkServiceClient.getService();
-				mNetworkService.setServers(SharedPreferencesManager.getServers(c));
+				mNetworkService.setServers(SPManager.getServers(c));
 				mNetworkService.singleRefresh();
 				
 				while(!mNetworkService.isRefreshed()){
-					Thread.sleep(2000);
+					Thread.sleep(1000);
 				}
 
 			} catch (Exception e) {
@@ -372,7 +372,7 @@ public class Overview extends Activity {
 			/* Get the selected item out of the Adapter by its position. */
 			favContexted = (Server) mSrvList.getAdapter().getItem(info.position);
 			/* Remove it from the list.*/
-			SharedPreferencesManager.removeServer(this, favContexted.name);
+			SPManager.removeServer(this, favContexted.name);
 			mServers.remove(favContexted);
 
 			refreshFavListItems();

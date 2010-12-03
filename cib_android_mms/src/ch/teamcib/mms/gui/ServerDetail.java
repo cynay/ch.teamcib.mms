@@ -20,27 +20,74 @@ import ch.teamcib.mms.DataHelper;
 import ch.teamcib.mms.R;
 	 
 	public class ServerDetail extends Activity {
-	   
-	   private TextView output; 
-	   private DataHelper dh;
-	   private String iInfo;
+
+		private TextView hostname; 
+		private TextView lastRefresh; 
+		private TextView output; 
+		private TextView time; 
+		private TextView status; 
+		private TextView process; 
+		private DataHelper dh;
+		private String sHostname;
+//		private String iInfo;
 	    
 	    @Override
 	    public void onCreate(Bundle savedInstanceState) {
 	        super.onCreate(savedInstanceState);
 	        setContentView(R.layout.server_detail);
 
-	        this.output = (TextView) this.findViewById(R.id.out_text);
+//	        this.output = (TextView) this.findViewById(R.id);
+	        hostname = (TextView) findViewById(R.id.hostname);
+	        lastRefresh = (TextView) findViewById(R.id.lastRefresh);
+	        time = (TextView) findViewById(R.id.time);
+	        status = (TextView) findViewById(R.id.status);
+	        process = (TextView) findViewById(R.id.process);
+	        sHostname = getIntent().getStringExtra("host");
+	        hostname.setText(sHostname);
 
-	        output.append(getIntent().getStringExtra("host"));
-	        Toast.makeText(this, getIntent().getStringExtra("host"), Toast.LENGTH_SHORT).show();
-	        this.dh = new DataHelper(this);
-
-	        testCursor();
-//	        testSelectColum();
-	        btDiagram();
+	        // FIXME hostname check if in db !!!
 	        
+//	        output.append(getIntent().getStringExtra("host"));
+//	        Toast.makeText(this, getIntent().getStringExtra("host"), Toast.LENGTH_SHORT).show();
+	        dh = new DataHelper(this);
+	        
+	        time.setText(testTime());
+	        status.setText(testFill("status"));
+	        process.setText(testFill("calc.exe"));
+	        if(time.getText().length() > 7 )
+	        	lastRefresh.setText(time.getText().subSequence(0, 8));
+//	        testCursor();
+//	        testSelectColum();
+	        btDiagram();	        
       
+	    }
+	    
+	    private String testFill(String key){
+	    	StringBuilder sb = new StringBuilder();
+	    	Cursor cursor = dh.selectHostKey(sHostname, key);
+	    	
+	    	while(cursor.moveToNext()){
+	    		if (key.equals("date")) {
+		        	sb.append(cursor.getString(0).split(" ")[1] +"\n");
+	    		} else {
+	    			sb.append(cursor.getString(3)+ "\n");
+	    		}
+	    	}
+	    	
+	    	return sb.toString();
+	    	
+	    }
+	    private String testTime(){
+	    	StringBuilder sb = new StringBuilder();
+	    	Cursor cursor = dh.selectHostKey(sHostname, "status");
+
+	    	while(cursor.moveToNext()){
+	    		sb.append(cursor.getString(0).split(" ")[1] +"\n");
+
+	    	}
+	    	
+	    	return sb.toString();
+	    	
 	    }
 	    
 	    /**

@@ -24,7 +24,12 @@ public class ServerGraph extends Activity {
 		int i = 0;
 		while ( cur.isAfterLast() == false) {
 //			Toast.makeText(this, cur.getString(3).split("/")[0], Toast.LENGTH_SHORT).show();
-			vals[i] = Float.valueOf(cur.getString(3).split("/")[0]).floatValue() / 1000;
+			if (cur.getString(3).equals("~")){
+				vals[i] = 0;
+			} else {
+				vals[i] = Float.valueOf(cur.getString(3).split("/")[0]).floatValue() / 1000;
+			}
+			
 			i++;
 			cur.moveToNext();
 		}

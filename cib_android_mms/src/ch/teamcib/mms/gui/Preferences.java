@@ -50,9 +50,6 @@ implements OnSharedPreferenceChangeListener {
 			.findPreference(KEY_EDT_TIMER);
 		
 		
-		mServiceStatus.setChecked(false);
-		
-		
 		// on click reset DB		
 		Preference rstDB = (Preference) findPreference("prf_resetDB");
 		rstDB.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -76,6 +73,10 @@ implements OnSharedPreferenceChangeListener {
 	protected void onResume() {
 		super.onResume();
 
+		// set the ServiceActivated-checkbox to the correct state
+		mServiceStatus.setChecked(SPManager.getConfigValue(this, 
+				SPManager.KEY_SERVICESTATUS));
+		
 		// Set up a listener whenever a key changes            
 		getPreferenceScreen().getSharedPreferences()
 			.registerOnSharedPreferenceChangeListener(this);
@@ -107,20 +108,20 @@ implements OnSharedPreferenceChangeListener {
 		if (key.equals(KEY_CKB_STATUS)) {
 			boolean checked = sharedPreferences.getBoolean(key, false);
 			if (checked){
-				SharedPreferencesManager.addConfigValue(this, 
-						SharedPreferencesManager.KEY_SERVICESTATUS, true);
+				SPManager.addConfigValue(this, 
+						SPManager.KEY_SERVICESTATUS, true);
 				
 				startService();
 				toastMsg = "Service activated";
 			} else if (!checked) {
-				SharedPreferencesManager.addConfigValue(this, 
-						SharedPreferencesManager.KEY_SERVICESTATUS, false);
+				SPManager.addConfigValue(this, 
+						SPManager.KEY_SERVICESTATUS, false);
 				
 				stopService();
 				toastMsg = "Service deactivated";
 			}
 		} else if (key.equals(KEY_EDT_TIMER)){
-			SharedPreferencesManager.addConfigValueLong(this, "RefreshRate", 
+			SPManager.addConfigValueLong(this, "RefreshRate", 
 				Long.valueOf(mRefreshRate.getText()).longValue() * 1000);
 			
 			toastMsg = "Refresh rate changed!";
