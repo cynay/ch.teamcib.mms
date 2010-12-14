@@ -78,7 +78,8 @@ public class ServerConfig extends Activity {
 		
 		} catch (Exception e){
 			// TODO debug stuff
-			Toast.makeText(this, "ERROR: " + e.getMessage() , Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "ERROR: " + e.getMessage(), 
+					Toast.LENGTH_SHORT).show();
 		}			
 	}
 }
