@@ -69,7 +69,6 @@ public class Overview extends Activity {
 	private INetworkService mNetworkService;
 	private Handler mHandler = new Handler();
 	private TextView mTimer;
-	private long mRefreshRate = 60000;
 
 
 	@Override
@@ -120,9 +119,12 @@ public class Overview extends Activity {
 		super.onResume();
 		Log.i("-> OVERVIEW", "onResume()");
 		
-		// get the Refresh rate from the settings
-		mRefreshRate = SPManager.getConfigValueLong(this, 
-				SPManager.KEY_REFRESHRATE);
+		// set timer correct
+		if(SPManager.getConfigValue(getBaseContext(),
+				SPManager.KEY_SERVICESTATUS) && mTimer.getText().length() == 23) {
+			mHandler.postDelayed(mUpdateTimeTask, 100);
+		}
+		
 		
 		// if service is started bind to service
 		NetworkServiceClient.bindSvc(this);
@@ -267,13 +269,14 @@ public class Overview extends Activity {
 		}
 	}
 
-	
+
 	private Runnable mUpdateTimeTask = new Runnable() {	
 		private boolean reset = true;		
-		
+
 		public void run() {
 			if (reset){
-				new CountDownTimer(mRefreshRate, 200) {
+				new CountDownTimer(SPManager.getConfigValueLong(
+						getBaseContext(), SPManager.KEY_REFRESHRATE), 200) {
 
 					public void onTick(long millisUntilFinished) {
 						mTimer.setText("Next refresh in  " + 
@@ -281,40 +284,45 @@ public class Overview extends Activity {
 					}
 
 					public void onFinish() {				    	 
-
 						reset = true;
 					}
 				}.start();
 				reset = false;
 			}
 
-			mHandler.postDelayed(this, 200);
+			if(SPManager.getConfigValue(getBaseContext(),
+					SPManager.KEY_SERVICESTATUS)) {
+				Log.i("-> OVERVIEW", "restart timer");
+				mHandler.postDelayed(this, 200);
+			} else {
+				mTimer.setText("Autorefresh not active!");
+			}
 		}
 
 		private String formatTime(long millis) {
-			  String output = "00:00:00";
-			  long seconds = millis / 1000;
-			  long minutes = seconds / 60;
-			  long hours = minutes / 60;
+			String output = "00:00:00";
+			long seconds = millis / 1000;
+			long minutes = seconds / 60;
+			long hours = minutes / 60;
 
-			  seconds = seconds % 60;
-			  minutes = minutes % 60;
-			  hours = hours % 60;
+			seconds = seconds % 60;
+			minutes = minutes % 60;
+			hours = hours % 60;
 
-			  String secondsD = String.valueOf(seconds);
-			  String minutesD = String.valueOf(minutes);
-			  String hoursD = String.valueOf(hours); 
+			String secondsD = String.valueOf(seconds);
+			String minutesD = String.valueOf(minutes);
+			String hoursD = String.valueOf(hours); 
 
-			  if (seconds < 10)
-			    secondsD = "0" + seconds;
-			  if (minutes < 10)
-			    minutesD = "0" + minutes;
-			  if (hours < 10)
-			    hoursD = "0" + hours;
+			if (seconds < 10)
+				secondsD = "0" + seconds;
+			if (minutes < 10)
+				minutesD = "0" + minutes;
+			if (hours < 10)
+				hoursD = "0" + hours;
 
-			  output = hoursD + ":" + minutesD + ":" + secondsD;
-			  return output;
-			}
+			output = hoursD + ":" + minutesD + ":" + secondsD;
+			return output;
+		}
 	};	
 
 

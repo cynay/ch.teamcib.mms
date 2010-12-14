@@ -121,7 +121,7 @@ implements OnSharedPreferenceChangeListener {
 				toastMsg = "Service deactivated";
 			}
 		} else if (key.equals(KEY_EDT_TIMER)){
-			SPManager.addConfigValueLong(this, "RefreshRate", 
+			SPManager.addConfigValueLong(this, SPManager.KEY_REFRESHRATE, 
 				Long.valueOf(mRefreshRate.getText()).longValue() * 1000);
 			
 			toastMsg = "Refresh rate changed!";

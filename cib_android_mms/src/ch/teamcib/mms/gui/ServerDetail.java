@@ -98,8 +98,16 @@ import ch.teamcib.mms.R;
 	        Button btDiagram = (Button) findViewById(R.id.bt_diagram);
 	        btDiagram.setOnClickListener(new View.OnClickListener() {
 	            public void onClick(View view) {
-	                Intent myIntent = new Intent(view.getContext(), ServerGraph.class);
-	                startActivityForResult(myIntent, 0);
+	            	
+	            	// Create an Intent with the Hostname added to extras
+	    			Intent i = new Intent();
+	        		i.putExtra("host", sHostname );    			
+	    			i.setClass(getBaseContext(), ServerGraph.class);
+	    			startActivity(i);
+	            	
+	            	
+//	                Intent myIntent = new Intent(view.getContext(), ServerGraph.class);
+//	                startActivityForResult(myIntent, 0);
 	            }
 
 	        });

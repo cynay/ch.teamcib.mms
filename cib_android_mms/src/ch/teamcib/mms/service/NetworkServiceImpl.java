@@ -9,11 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.teamcib.mms.DataHelper;
+import ch.teamcib.mms.SPManager;
 import ch.teamcib.mms.TCPSocket;
 import ch.teamcib.mms.gui.Overview;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -34,13 +36,18 @@ public class NetworkServiceImpl extends Service {
     // ===========================================================
 	private static final int NUMBER_OF_SERVERS = 12;
 
-	private String[] servers = new String[NUMBER_OF_SERVERS];
+	// ===========================================================
+    // Members
+    // ===========================================================
+	private String[] mServers = new String[NUMBER_OF_SERVERS];
 	private String[] mValues = new String[NUMBER_OF_SERVERS];
-
+	
+	private Handler mHandler = new Handler();
 	private String mData;
 	private int mRefreshedCounter = 0;
 	private boolean mIsRefreshed = false;
 
+	
 	@Override
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
@@ -63,19 +70,20 @@ public class NetworkServiceImpl extends Service {
 		@Override
 		public void startService() throws RemoteException {
 			// TODO Auto-generated method stub
-			start();
+			mHandler.removeCallbacks(mRefreshTask);
+	        mHandler.postDelayed(mRefreshTask, 100);
 		}
 
 		@Override
 		public void stopService() throws RemoteException {
 			// TODO Auto-generated method stub
-			stop();
+			mHandler.removeCallbacks(mRefreshTask);
 		}
 
 		@Override
 		public void setServers(String[] servers) throws RemoteException {
 			// TODO Auto-generated method stub
-			NetworkServiceImpl.this.servers = servers;
+			NetworkServiceImpl.this.mServers = servers;
 		}
 
 		@Override
@@ -96,12 +104,12 @@ public class NetworkServiceImpl extends Service {
 	private void updateServerList(){
 		Log.i("-> REMOTE SERVICE", "updateServerList()");
 		
-		for (int i = 0; i < servers.length; i++){
-			Log.i("-> REMOTE SERVICE", "Value: " + servers[i]);
-			if(servers[i] != null){
-				Log.i("-> REMOTE SERVICE", "Create Task for: " + servers[i]);
+		for (int i = 0; i < mServers.length; i++){
+			Log.i("-> REMOTE SERVICE", "Value: " + mServers[i]);
+			if(mServers[i] != null){
+				Log.i("-> REMOTE SERVICE", "Create Task for: " + mServers[i]);
 				mRefreshedCounter++;
-				new Task(servers[i],1337 ,i).start();
+				new Task(mServers[i],1337 ,i).start();
 				
 				
 //				try {
@@ -129,16 +137,6 @@ public class NetworkServiceImpl extends Service {
 //		mThread.start();
 		
 	}
-	
-	private void start(){
-		Log.i("-> REMOTE SERVICE", "start()");
-	}
-	
-	private void stop(){
-		Log.i("-> REMOTE SERVICE", "stop()");
-//		mThread.isDone = true;
-		this.stopSelf();
-	}
 
 
 	@Override
@@ -158,6 +156,46 @@ public class NetworkServiceImpl extends Service {
 		super.onStart(intent, startId);
 		Log.i("-> REMOTE SERVICE", "onStart()");
 	}
+	
+	
+	private Runnable mRefreshTask = new Runnable() {	
+		private boolean reset = true;		
+		
+		public void run() {
+			if (reset){
+				new CountDownTimer(SPManager.getConfigValueLong(
+						getBaseContext(), SPManager.KEY_REFRESHRATE), 200) {
+
+					@Override
+					public void onTick(long millisUntilFinished) {
+						Log.i("-> REMOTE SERVICE THREAD", "timer onTick()");
+						// TODO check if deactivated in the meantime	
+						if(!SPManager.getConfigValue(getBaseContext(),
+								SPManager.KEY_SERVICESTATUS)) {
+							Log.i("-> REMOTE SERVICE THREAD", "timer cancel()...");
+							this.cancel();
+						}
+					}
+
+					@Override
+					public void onFinish() {
+						// Refresh date and restart Timer
+						Log.i("-> REMOTE SERVICE THREAD", "timer onFinish()");
+						Toast.makeText(getBaseContext(), "Background timer finished!", 
+								Toast.LENGTH_SHORT).show();
+						reset = true;
+					}
+				}.start();
+				reset = false;
+			}
+
+			if(SPManager.getConfigValue(getBaseContext(),
+					SPManager.KEY_SERVICESTATUS)) {
+				Log.i("-> REMOTE SERVICE THREAD", "restart background timer");
+				mHandler.postDelayed(this, 200);
+			}		
+		}
+	};
 	
 
 	/**

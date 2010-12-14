@@ -16,8 +16,10 @@ public class ServerGraph extends Activity {
 		super.onCreate(savedInstanceState);
 //		setContentView(R.layout.server_detail); 
 		
+		String hostname = getIntent().getStringExtra("host");
+		
 		DataHelper dh = new DataHelper(getBaseContext());
-		Cursor cur = dh.selectHostKey("caffein.ch", "mem");
+		Cursor cur = dh.selectHostKey(hostname, "mem");
 		 
 		cur.moveToFirst();
 		float[] vals = new float[cur.getCount()];
