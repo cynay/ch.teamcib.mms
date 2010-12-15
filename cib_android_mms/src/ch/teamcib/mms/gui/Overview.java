@@ -61,7 +61,7 @@ public class Overview extends Activity {
 			Toast.makeText(this, "Enjoy this app!", Toast.LENGTH_LONG).show();
         
 		// start service
-//		NetworkServiceClient.startSvc(this);
+		NetworkServiceClient.startSvc(this);
 
         mSrvList = (ListView) findViewById(R.id.list_servers);
         
@@ -84,11 +84,8 @@ public class Overview extends Activity {
 
         initListView();
 		
-		
-		// /NEW //
+        new UpdateTimerTask().execute((Void)null);
 
-		mHandler.removeCallbacks(mUpdateTimeTask);
-        mHandler.postDelayed(mUpdateTimeTask, 100);
 	}
 	
 	
@@ -97,19 +94,14 @@ public class Overview extends Activity {
 		super.onResume();
 		Log.i("-> OVERVIEW", "onResume()");
 		
-		// set timer correct
+		// bind to service
+		NetworkServiceClient.bindSvc(this);		
+		
+		// start the timer if service is running 
 		if(SPManager.getConfigValue(getBaseContext(),
-				SPManager.KEY_SERVICESTATUS) && mTimer.getText().length() == 23) {
-			mHandler.postDelayed(mUpdateTimeTask, 100);
+				SPManager.KEY_SERVICESTATUS)) {
+			new UpdateTimerTask().execute((Void)null);
 		}
-		
-		
-		// if service is started bind to service
-		NetworkServiceClient.bindSvc(this);
-//		if (SharedPreferencesManager.getConfigValue(this, 
-//				SharedPreferencesManager.KEY_SERVICESTATUS) == true){
-//			NetworkServiceClient.bindSvc(this);
-//		}
 		
 		/* refresh items for the list the listview  */
 		mServers.clear();
@@ -128,12 +120,8 @@ public class Overview extends Activity {
 		super.onPause();
 		Log.i("-> OVERVIEW", "onPause()");
 		
-		// if service is started unbind from service
-		NetworkServiceClient.unbindSvc(this);
-//		if (SharedPreferencesManager.getConfigValue(this, 
-//				SharedPreferencesManager.KEY_SERVICESTATUS) == true){
-//			NetworkServiceClient.unbindSvc(this);
-//		}		
+		// unbind from service
+		NetworkServiceClient.unbindSvc(this);		
 	}
 	
 	/**
@@ -246,37 +234,38 @@ public class Overview extends Activity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-
-
-	private Runnable mUpdateTimeTask = new Runnable() {	
-		private boolean reset = true;		
-
-		public void run() {
-			if (reset){
-				new CountDownTimer(SPManager.getConfigValueLong(
-						getBaseContext(), SPManager.KEY_REFRESHRATE), 200) {
-
-					public void onTick(long millisUntilFinished) {
-						mTimer.setText("Next refresh in  " + 
-								formatTime( millisUntilFinished ));
-					}
-
-					public void onFinish() {				    	 
-						reset = true;
-					}
-				}.start();
-				reset = false;
-			}
-
+	
+	private class UpdateTimerTask extends AsyncTask<Void, Void, Void>  {
+		long mTimerMillis;
+		
+		protected void onPostExecute(Void result){
+			
 			if(SPManager.getConfigValue(getBaseContext(),
 					SPManager.KEY_SERVICESTATUS)) {
-				Log.i("-> OVERVIEW", "restart timer");
-				mHandler.postDelayed(this, 200);
+//				Log.i("-> OVERVIEW", "restart timer");
+				mTimer.setText("Next refresh in  " + 
+						formatTime( mTimerMillis ));
+				new UpdateTimerTask().execute((Void)null);
 			} else {
-				mTimer.setText("Autorefresh not active!");
+				mTimer.setText("Autorefresh inactive!");
 			}
 		}
+		
+		@Override
+		protected Void doInBackground(Void... params) {
+			try {
+				Thread.sleep(500);
+				mNetworkService = NetworkServiceClient.getService();
+				mTimerMillis = mNetworkService.getTimerMillis();
 
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			return null;
+		}
+		
 		private String formatTime(long millis) {
 			String output = "00:00:00";
 			long seconds = millis / 1000;
@@ -301,7 +290,7 @@ public class Overview extends Activity {
 			output = hoursD + ":" + minutesD + ":" + secondsD;
 			return output;
 		}
-	};	
+	}
 
 
 	// NEW

@@ -123,20 +123,11 @@ implements OnSharedPreferenceChangeListener {
 		} else if (key.equals(KEY_EDT_TIMER)){
 			SPManager.addConfigValueLong(this, SPManager.KEY_REFRESHRATE, 
 				Long.valueOf(mRefreshRate.getText()).longValue() * 1000);
-			
+			stopService();
+			startService();
 			toastMsg = "Refresh rate changed!";
 		}
-
-
-		//		mServiceStatus.setSummary(sharedPreferences.getBoolean(key, false) 
-		//				? "Disable this setting" : "Enable this setting");
-		//		toastMsg = sharedPreferences.getBoolean(key, false) 
-		//		? "Service activated!" : "Service deactivated!" ;
-
-
-
 		Toast.makeText(this, toastMsg, Toast.LENGTH_SHORT).show();
-
 	}
 	
 	private void startService(){

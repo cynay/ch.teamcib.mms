@@ -1,24 +1,15 @@
 package ch.teamcib.mms.service;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
-
 import ch.teamcib.mms.DataHelper;
 import ch.teamcib.mms.SPManager;
 import ch.teamcib.mms.TCPSocket;
-import ch.teamcib.mms.gui.Overview;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
@@ -156,54 +147,51 @@ public class NetworkServiceImpl extends Service {
 		Log.i("-> REMOTE SERVICE", "onStart()");
 	}
 	
-	
-	private Runnable mRefreshTask = new Runnable() {	
-		private boolean reset = true;		
-		
+
+	private Runnable mRefreshTask = new Runnable() {
+
 		public void run() {
-			if (reset){
-				new CountDownTimer(SPManager.getConfigValueLong(
-						getBaseContext(), SPManager.KEY_REFRESHRATE), 200) {
+			new CountDownTimer(SPManager.getConfigValueLong(
+					getBaseContext(), SPManager.KEY_REFRESHRATE), 500) {
 
-					@Override
-					public void onTick(long millisUntilFinished) {
-						Log.i("-> REMOTE SERVICE THREAD", "timer onTick()");
-						mTimerMillis = millisUntilFinished;
-						
-						// check if bg-service is deactivated in the meantime	
-						if(!SPManager.getConfigValue(getBaseContext(),
-								SPManager.KEY_SERVICESTATUS)) {
-							Log.i("-> REMOTE SERVICE THREAD", "timer cancel()...");
-							this.cancel();
-						}
+				@Override
+				public void onTick(long millisUntilFinished) {
+					//						Log.i("-> REMOTE SERVICE THREAD", "timer onTick()");
+					mTimerMillis = millisUntilFinished;
+
+					// check if bg-service is deactivated in the meantime	
+					if(!SPManager.getConfigValue(getBaseContext(),
+							SPManager.KEY_SERVICESTATUS)) {
+						Log.i("-> REMOTE SERVICE THREAD", "timer cancel()...");
+						this.cancel();
 					}
+				}
 
-					@Override
-					public void onFinish() {
-						// Refresh date and restart Timer
-						Log.i("-> REMOTE SERVICE THREAD", "timer onFinish()");
-						
-						// FIXME do a refresh
+				@Override
+				public void onFinish() {
+					// Refresh date and restart Timer
+					Log.i("-> REMOTE SERVICE THREAD", "timer onFinish()");
+					mTimerMillis = -1;
+
+					// do a refresh if not deactivated in meantime
+					if(SPManager.getConfigValue(getBaseContext(),
+							SPManager.KEY_SERVICESTATUS)) {
+
+						//FIXME refresh to do ...
 						Toast.makeText(getBaseContext(), "Background timer finished!", 
 								Toast.LENGTH_SHORT).show();
-						reset = true;
-					}
-				}.start();
-				reset = false;
-			}
 
-			if(SPManager.getConfigValue(getBaseContext(),
-					SPManager.KEY_SERVICESTATUS)) {
-				Log.i("-> REMOTE SERVICE THREAD", "restart background timer");
-				mHandler.postDelayed(this, 200);
-			}		
+						mHandler.postDelayed(mRefreshTask, 200);
+					}
+				}
+			}.start();
 		}
 	};
 	
 
 	/**
 	 * 
-	 * @author Yannic Schneider
+	 * 
 	 *
 	 */
 	private class Task extends Thread {
@@ -309,38 +297,7 @@ public class NetworkServiceImpl extends Service {
 
 			}
 			
-			
-					
 			Log.i("-> REMOTE SERVICE THREAD", "end of run() of -> " + mHost);
 		}
-	}
-	
-
-
-	private void ping(String hostname) {
-
-		String ip = hostname;
-		String pingResult = "";
-
-		String pingCmd = "ping " + ip;
-
-		try {
-			Runtime r = Runtime.getRuntime();
-			Process p = r.exec(pingCmd);
-
-			BufferedReader in = new BufferedReader(new
-					InputStreamReader(p.getInputStream()));
-			String inputLine;
-			while ((inputLine = in.readLine()) != null) {
-				System.out.println(inputLine);
-				pingResult += inputLine;
-			}
-			in.close();
-
-		}//try
-		catch (IOException e) {
-			System.out.println(e);
-		}
-
 	}
 }
