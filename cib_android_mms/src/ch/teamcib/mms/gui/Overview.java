@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.util.Log;
@@ -219,6 +218,11 @@ public class Overview extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.opt_add:
+			if(mServers.size() == 12){
+				Toast.makeText(this, "Serverlist is full! (max. 12 Servers)", 
+						Toast.LENGTH_LONG).show();
+				return true;
+			}
 			startActivity(new Intent(this, ServerConfig.class));
 			return true;
 		case R.id.opt_editSettings:

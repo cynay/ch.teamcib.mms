@@ -39,7 +39,7 @@ public class ServerGraph extends Activity {
 		
 //		float[] values = new float[] { 2.0f,1.5f, 2.5f, 1.0f , 3.0f, 6.0f,2.0f };
 //		String[] verlabels = new String[] { "4 GB", "3 GB", "2 GB","1 GB", "0 GB" };
-		String[] horlabels = new String[] { "", "past", "", "", "", "now", "" };
+		String[] horlabels = new String[] { "", "now", "", "", "", "past", "" };
 		GraphView graphView = new GraphView(this, vals, "RAM workload",horlabels, 4, GraphView.LINE);
 		setContentView(graphView);
 

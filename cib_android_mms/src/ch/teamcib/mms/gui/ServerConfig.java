@@ -1,7 +1,6 @@
 package ch.teamcib.mms.gui;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.View;
@@ -10,6 +9,8 @@ import android.widget.Toast;
 import ch.teamcib.mms.*;
 
 /**
+ * 
+ * 
  * 
  * @author Yannic Schneider
  *

@@ -17,7 +17,11 @@ public class DataHelper {
 	private static final String DATABASE_NAME = "db_mms.db";
 	private static final int DATABASE_VERSION = 1;
 	private static final String TABLE_NAME = "tbl_mms";
+	private final String MAX_VALUES = "20";
 
+	// ===========================================================
+    // Members
+    // ===========================================================
 	private Context context;
 	private SQLiteDatabase db;
 
@@ -90,7 +94,7 @@ public class DataHelper {
 	public Cursor selectTable() {
 		Cursor cursor = this.db
 				.rawQuery(
-						"SELECT date, hostname,key, value FROM tbl_mms ORDER BY date desc LIMIT 20",
+						"SELECT date, hostname,key, value FROM tbl_mms ORDER BY date desc LIMIT " + MAX_VALUES,
 						null);
 		
 		Log.i("-> DATAHELPER", "selectTable()");
@@ -108,7 +112,7 @@ public class DataHelper {
 		Log.i("-> DATAHELPER", "ENTERCOL");
 		Cursor cursor = this.db.rawQuery(
 				"SELECT date, hostname,key, value FROM tbl_mms WHERE hostname = '"
-						+ hostname + "' ORDER BY date desc LIMIT 10 ", null);
+						+ hostname + "' ORDER BY date desc LIMIT " + MAX_VALUES, null);
 		
 		Log.i("-> DATAHELPER", "selectCol: " + hostname);
 
@@ -125,7 +129,7 @@ public class DataHelper {
 	public Cursor selectHostKey(String hostname, String key) {
 		Cursor cursor = this.db.rawQuery(
 				"SELECT date, hostname,key, value FROM tbl_mms WHERE hostname = '"
-						+ hostname + "' AND key = '" + key + "' ORDER BY date desc LIMIT 10 ", null);
+						+ hostname + "' AND key = '" + key + "' ORDER BY date desc LIMIT " + MAX_VALUES, null);
 		
 		Log.i("-> DATAHELPER", "selectHostKey: " + hostname + key);
 
