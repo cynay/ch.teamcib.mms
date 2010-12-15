@@ -1,53 +1,31 @@
 package ch.teamcib.mms.gui;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-
 import ch.teamcib.mms.*;
-import ch.teamcib.mms.R.*;
 import ch.teamcib.mms.service.INetworkService;
+import java.util.ArrayList;
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.RemoteException;
-import android.os.SystemClock;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.*;
-import android.widget.TableLayout.LayoutParams;
 import android.view.ContextMenu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnCreateContextMenuListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 
 /**
  * @author Yannic Schneider
@@ -186,7 +164,7 @@ public class Overview extends Activity {
 				String data = mNetworkService.getData();
 				Log.i("-> OVERVIEW", data );
 
-				DataHelper dh = new DataHelper(c);
+//				DataHelper dh = new DataHelper(c);
 
 				String servers[] = data.split("&");
 

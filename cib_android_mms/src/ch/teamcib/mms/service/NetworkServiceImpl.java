@@ -45,12 +45,12 @@ public class NetworkServiceImpl extends Service {
 	private Handler mHandler = new Handler();
 	private String mData;
 	private int mRefreshedCounter = 0;
+	private long mTimerMillis = 0;
 	private boolean mIsRefreshed = false;
 
 	
 	@Override
 	public IBinder onBind(Intent intent) {
-		// TODO Auto-generated method stub
 		return mBinder;
 	}
 
@@ -58,7 +58,6 @@ public class NetworkServiceImpl extends Service {
 
 		@Override
 		public String getData() throws RemoteException {
-			// TODO Auto-generated method stub
 			mData = "";
 			for (String val : mValues){
 				if(val != null)
@@ -69,35 +68,35 @@ public class NetworkServiceImpl extends Service {
 
 		@Override
 		public void startService() throws RemoteException {
-			// TODO Auto-generated method stub
 			mHandler.removeCallbacks(mRefreshTask);
 	        mHandler.postDelayed(mRefreshTask, 100);
 		}
 
 		@Override
 		public void stopService() throws RemoteException {
-			// TODO Auto-generated method stub
 			mHandler.removeCallbacks(mRefreshTask);
 		}
 
 		@Override
 		public void setServers(String[] servers) throws RemoteException {
-			// TODO Auto-generated method stub
 			NetworkServiceImpl.this.mServers = servers;
 		}
 
 		@Override
 		public void singleRefresh() throws RemoteException {
-			// TODO Auto-generated method stub
 			mIsRefreshed = false;
 			updateServerList();
 		}
 
 		@Override
 		public boolean isRefreshed() throws RemoteException {
-			// TODO Auto-generated method stub
 			Log.i("-> REMOTE SERVICE", "isRefreshed() returns: " + mIsRefreshed);
 			return mIsRefreshed;
+		}
+
+		@Override
+		public long getTimerMillis() throws RemoteException {
+			return mTimerMillis;
 		}		
 	};
 	
@@ -169,7 +168,9 @@ public class NetworkServiceImpl extends Service {
 					@Override
 					public void onTick(long millisUntilFinished) {
 						Log.i("-> REMOTE SERVICE THREAD", "timer onTick()");
-						// TODO check if deactivated in the meantime	
+						mTimerMillis = millisUntilFinished;
+						
+						// check if bg-service is deactivated in the meantime	
 						if(!SPManager.getConfigValue(getBaseContext(),
 								SPManager.KEY_SERVICESTATUS)) {
 							Log.i("-> REMOTE SERVICE THREAD", "timer cancel()...");
@@ -181,6 +182,8 @@ public class NetworkServiceImpl extends Service {
 					public void onFinish() {
 						// Refresh date and restart Timer
 						Log.i("-> REMOTE SERVICE THREAD", "timer onFinish()");
+						
+						// FIXME do a refresh
 						Toast.makeText(getBaseContext(), "Background timer finished!", 
 								Toast.LENGTH_SHORT).show();
 						reset = true;
