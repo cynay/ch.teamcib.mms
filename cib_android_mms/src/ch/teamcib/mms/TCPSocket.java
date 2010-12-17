@@ -13,9 +13,14 @@ import java.net.*;
  * @author Yannic Schneider
  */
 public class TCPSocket {
-
+	// ===========================================================
+    // Finals
+    // ===========================================================
 	private final int TIMEOUT = 2000;
-	
+
+	// ===========================================================
+    // Members
+    // ===========================================================
     private Socket socket;
     private BufferedReader istream;
     private BufferedWriter ostream;

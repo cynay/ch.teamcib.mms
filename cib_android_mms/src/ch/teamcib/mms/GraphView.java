@@ -2,28 +2,33 @@ package ch.teamcib.mms;
 
 /**
  *  This class was copied from http://android.arnodenhond.com/components/graphview
+ *  with some modifications from TEAM-CIB for the use in our application.
  *  
  */
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.view.View;
-import android.widget.Button;
 
 /**
  * GraphView creates a scaled line or bar graph with x and y axis labels. 
+ * 
  * @author Arno den Hond
- *
+ * 
  */
 public class GraphView extends View {
+	// ===========================================================
+    // Finals 
+    // ===========================================================
+	public static final boolean BAR = true;
+	public static final boolean LINE = false;
 
-	public static boolean BAR = true;
-	public static boolean LINE = false;
-
+	// ===========================================================
+    // Members
+    // ===========================================================
 	private Paint paint;
 	private float[] values;
 	private String[] horlabels;
@@ -31,7 +36,18 @@ public class GraphView extends View {
 	private String title;
 	private boolean type;
 
-	public GraphView(Context context, float[] values, String title, String[] horlabels, int maxGB, boolean type) {
+	/**
+	 * constructor for the GraphView  
+	 * 
+	 * @param context	the context of the calling Activity
+	 * @param values	Array with the values for the graph
+	 * @param title		the title of the view
+	 * @param horlabels horizontal labels for the graph
+	 * @param maxGB		max value to set the size of the graph
+	 * @param type		bar(true) or line(false), use the static finals 
+	 */
+	public GraphView(Context context, float[] values, String title, 
+			String[] horlabels, int maxGB, boolean type) {
 		super(context);
 		if (values == null)
 			values = new float[0];
@@ -73,8 +89,6 @@ public class GraphView extends View {
 		float horstart = border * 2;
 		float height = getHeight();
 		float width = getWidth() - 1;
-//		float max = getMax();
-//		float min = getMin();
 		
 		float max = 4;
 		float min = 0;
@@ -118,7 +132,9 @@ public class GraphView extends View {
 					float val = values[i] - min;
 					float rat = val / diff;
 					float h = graphheight * rat;
-					canvas.drawRect((i * colwidth) + horstart, (border - h) + graphheight, ((i * colwidth) + horstart) + (colwidth - 1), height - (border - 1), paint);
+					canvas.drawRect((i * colwidth) + horstart, (border - h) + 
+							graphheight, ((i * colwidth) + horstart) + 
+							(colwidth - 1), height - (border - 1), paint);
 				}
 			} else {
 				float datalength = values.length;
@@ -130,50 +146,32 @@ public class GraphView extends View {
 					float rat = val / diff;
 					float h = graphheight * rat;
 					if (i > 0)
-						canvas.drawLine(((i - 1) * colwidth) + (horstart + 1) + halfcol, (border - lasth) + graphheight, (i * colwidth) + (horstart + 1) + halfcol, (border - h) + graphheight, paint);
+						canvas.drawLine(((i - 1) * colwidth) + (horstart + 1) + 
+								halfcol, (border - lasth) + graphheight, 
+								(i * colwidth) + (horstart + 1) + halfcol, 
+								(border - h) + graphheight, paint);
 					lasth = h;
 				}
 			}
 		}
 	}
 
-	private float getMax() {
-		float largest = Integer.MIN_VALUE;
-		for (int i = 0; i < values.length; i++)
-			if (values[i] > largest)
-				largest = values[i];
-		return largest;
-	}
-	
-//	/**
-//	 * Set the Maximum
-//	 * @param largest
-//	 * @return
-//	 */
-//	private float setMax(float largest) {
-//		float setlargest = largest;
-//		
-//		return setlargest;
-//	}
-
-	private float getMin() {
-		float smallest = Integer.MAX_VALUE;
-		for (int i = 0; i < values.length; i++)
-			if (values[i] < smallest)
-				smallest = values[i];
-		return smallest;
-	}
-	
+//	NOT USED ANYMORE!
 //	
-//	/**
-//	 * Set minimum for the canvas
-//	 * @return
-//	 */
-//	private float setMin() {
-//		float setsmallest = 0;
-//		return setsmallest;
+//	private float getMax() {
+//		float largest = Integer.MIN_VALUE;
+//		for (int i = 0; i < values.length; i++)
+//			if (values[i] > largest)
+//				largest = values[i];
+//		return largest;
 //	}
-	
-	
+//
+//	private float getMin() {
+//		float smallest = Integer.MAX_VALUE;
+//		for (int i = 0; i < values.length; i++)
+//			if (values[i] < smallest)
+//				smallest = values[i];
+//		return smallest;
+//	}
 
 }

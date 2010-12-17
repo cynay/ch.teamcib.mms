@@ -16,12 +16,14 @@ import android.widget.Toast;
 
 
 /**
- * NetworkServiceImpl
+ * NetworkServiceImpl is our Implementation of our Background-Service.
+ * 
+ * This Service can be activated an when it is it does a Refresh of all servers
+ * saved in the serverslist in a specified interval. 
  *
  * @author Yannic Schneider
  */
 public class NetworkServiceImpl extends Service {
-	
 	// ===========================================================
     // Finals
     // ===========================================================
