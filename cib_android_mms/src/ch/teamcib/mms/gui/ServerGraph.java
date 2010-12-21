@@ -2,12 +2,9 @@ package ch.teamcib.mms.gui;
 
 import ch.teamcib.mms.DataHelper;
 import ch.teamcib.mms.GraphView;
-import ch.teamcib.mms.R;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.widget.EditText;
-import android.widget.Toast;
 
 public class ServerGraph extends Activity {
 	

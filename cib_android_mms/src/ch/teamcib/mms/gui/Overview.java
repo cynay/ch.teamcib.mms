@@ -27,7 +27,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
 /**
- * @author Yannic Schneider
+ * @author CiB
  */
 public class Overview extends Activity {
 	

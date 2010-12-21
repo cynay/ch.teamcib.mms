@@ -9,9 +9,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.webkit.WebView;
 import ch.teamcib.mms.*;
-import ch.teamcib.mms.R.id;
-import ch.teamcib.mms.R.layout;
-import ch.teamcib.mms.R.raw;
 
 public class ShowHelp extends Activity{
 

@@ -9,6 +9,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+/**
+ * 
+ * Class DataHelper
+ * 
+ * @author CiB
+ *
+ */
 public class DataHelper {
 
 	// ===========================================================
@@ -25,6 +32,12 @@ public class DataHelper {
 	private Context context;
 	private SQLiteDatabase db;
 
+	
+	/**
+	 * Constructor creates a instance of the OpenHelper
+	 * 
+	 * @param the context from the calling activity
+	 */
 	public DataHelper(Context context) {
 		this.context = context;
 		OpenHelper openHelper = new OpenHelper(this.context);
@@ -32,11 +45,12 @@ public class DataHelper {
 	}
 
 	/**
-	 * --USE Insert Value into Table tbl_mms
+	 * 	This method creates 
+	 *  Insert Value into Table tbl_mms
 	 * 
-	 * @param hostname
-	 * @param key
-	 * @param value
+	 * @param hostname IP or hostname of the server in String
+	 * @param key identifies the following value in String
+	 * @param value associated with the key in String
 	 */
 	public void InsertIntoTable(String hostname, String key, String value) {
 		Calendar cal = Calendar.getInstance();
@@ -50,23 +64,6 @@ public class DataHelper {
 		Log.i("-> DATAHELPER", "InsertIntoTable (done): " + hostname + key + value);
 	}
 
-	/**
-	 * --USE This method will insert the String which was send by the Server
-	 * 
-	 * @param hostinfo
-	 */
-	public void insertStringRow(String hostinfo) {
-
-		String seperator = "[,]";
-		String[] hostinfos = hostinfo.split(seperator);
-		String hostname, key, value;
-		hostname = hostinfos[0];
-		key = hostinfos[1];
-		value = hostinfos[2];
-
-		InsertIntoTable(hostname, key, value);
-
-	}
 
 	/**
 	 * Delete content of table
@@ -76,25 +73,28 @@ public class DataHelper {
 	}
 
 	/**
-	 * Delete certain Row
+	 * Delete a certain Row 
+	 * rowId must known from the table
 	 * 
-	 * @param rowId
+	 * @param rowId in Integer  
 	 */
 	public void deleteRow(Integer rowId) {
 		db.delete(TABLE_NAME, "_id=" + rowId, null);
 		Log.i("-> DATAHELPER", "deleteRow (done): " + rowId);
 	}
 
+	
 	/**
+	 * Select each columns of the table tbl_mms.
+	 * Limited rows output
 	 * 
-	 * --USE
-	 * 
-	 * @return Cursor
+	 * @return cursor which returns the result of the query
 	 */
 	public Cursor selectTable() {
 		Cursor cursor = this.db
 				.rawQuery(
-						"SELECT date, hostname,key, value FROM tbl_mms ORDER BY date desc LIMIT " + MAX_VALUES,
+						"SELECT date, hostname,key, value FROM tbl_mms " +
+						"ORDER BY date desc LIMIT " + MAX_VALUES,
 						null);
 		
 		Log.i("-> DATAHELPER", "selectTable()");
@@ -103,17 +103,19 @@ public class DataHelper {
 	}
 
 	/**
-	 * --USE
+	 * Select each columns of the table tbl_mms.
+	 * Limited rows output
+	 * Filtered by hostname
 	 * 
-	 * @param para
-	 * @return Cursor
+	 * @param hostname IP or hostname of the server in String
+	 * @return cursor which returns the result of the query 
 	 */
 	public Cursor selectCol(String hostname) {
 		Log.i("-> DATAHELPER", "ENTERCOL");
 		Cursor cursor = this.db.rawQuery(
-				"SELECT date, hostname,key, value FROM tbl_mms WHERE hostname = '"
-						+ hostname + "' ORDER BY date desc LIMIT " + MAX_VALUES, null);
-		
+			"SELECT date, hostname,key, value FROM tbl_mms WHERE hostname = '"
+			+ hostname + "' ORDER BY date desc LIMIT " + MAX_VALUES, null);
+
 		Log.i("-> DATAHELPER", "selectCol: " + hostname);
 
 		return cursor;
@@ -121,36 +123,52 @@ public class DataHelper {
 	
 	
 	/**
-	 * --USE
+	 * Select each columns of the table tbl_mms.
+	 * Limited rows output
+	 * Filtered by hostname and key
 	 * 
-	 * @param para
-	 * @return Cursor
+	 * @param hostname IP or hostname of the server in String
+	 * @param key identifies the following value in String
+	 * @return cursor which returns the result of the query
 	 */
 	public Cursor selectHostKey(String hostname, String key) {
 		Cursor cursor = this.db.rawQuery(
-				"SELECT date, hostname,key, value FROM tbl_mms WHERE hostname = '"
-						+ hostname + "' AND key = '" + key + "' ORDER BY date desc LIMIT " + MAX_VALUES, null);
-		
-		Log.i("-> DATAHELPER", "selectHostKey: " + hostname + key);
+			"SELECT date, hostname,key, value FROM tbl_mms WHERE hostname = '"
+			+ hostname + "' AND key = '" + key + "' ORDER BY date desc LIMIT " 
+			+ MAX_VALUES, null);
 
 		return cursor;
 	}
 	
+	/**
+	 * Close database
+	 */
 	public void closeDB (){
 		db.close();
 		Log.i("-> DATAHELPER", "! closeDB()" );
 	}
 
+	/**
+	 *  Class OpenHelper
+	 *  This class creates the database
+	 *  
+	 * @author CiB
+	 *
+	 */
 	private static class OpenHelper extends SQLiteOpenHelper {
 
+		/**
+		 * Constructor 
+		 * Creates the database
+		 * 
+		 * @param context the context from the calling activity or class
+		 */
 		OpenHelper(Context context) {
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);
 
 		}
 
-		/**
-		 * Create table tbl_mms
-		 */
+		
 		@Override
 		public void onCreate(SQLiteDatabase db) {
 			db.execSQL("CREATE TABLE "
@@ -162,14 +180,12 @@ public class DataHelper {
 
 		/**
 		 * If data structure is changed this method have to run
-		 * 
 		 */
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			Log.w("-> DATAHELPER",
 					"Upgrading database, this will drop tables and recreate.");
 			db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-			// db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME2);
 			onCreate(db);
 		}
 	}

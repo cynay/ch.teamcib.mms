@@ -12,7 +12,7 @@ import ch.teamcib.mms.*;
  * 
  * 
  * 
- * @author Yannic Schneider
+ * @author CiB
  *
  */
 public class ServerConfig extends Activity {
@@ -79,8 +79,8 @@ public class ServerConfig extends Activity {
 		
 		} catch (Exception e){
 			// TODO debug stuff
-			Toast.makeText(this, "ERROR: " + e.getMessage(), 
-					Toast.LENGTH_SHORT).show();
+//			Toast.makeText(this, "ERROR: " + e.getMessage(), 
+//					Toast.LENGTH_SHORT).show();
 		}			
 	}
 }

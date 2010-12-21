@@ -10,18 +10,17 @@ import android.preference.PreferenceActivity;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.util.Log;
-import android.widget.EditText;
 import android.widget.Toast;
 import ch.teamcib.mms.*;
 import ch.teamcib.mms.service.INetworkService;
-import ch.teamcib.mms.service.NetworkServiceImpl;
 
 /**
  * This is the class for the Preferences. It handles everything on the 
  * Preferencesscreen ...
  * 
- * @author Yannic Schneider
- * URL: http://stackoverflow.com/questions/531427/how-do-i-display-the-current-value-of-an-android-preference-in-the-preference-sum
+ * @author CiB
+ * @see <a href=http://stackoverflow.com/questions/531427/>
+ * how-do-i-display-the-current-value-of-an-android-preference-in-the-preference-sum</>
  */
 public class Preferences extends PreferenceActivity 
 implements OnSharedPreferenceChangeListener {
