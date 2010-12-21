@@ -10,7 +10,7 @@ import java.util.*;
  * This class is for handling the Clients. For each connected client there is
  * a Task object for storing the socket etc.
  *
- * @author Yannic Schneider
+ * @author CiB
  */
 class Task implements Runnable{
     
@@ -67,7 +67,8 @@ class Task implements Runnable{
                 		String process = ("calc.exe=" + 
                 			(SystemData.isRunning("calc.exe") ? "running" : "down"));
                     	
-                		System.out.println("[*] DATA-STRING:  1&" + mHostname + "&" + data + ";" + process);
+                		System.out.println("[*] DATA-STRING:  1&" + mHostname + 
+                				"&" + data + ";" + process);
                 		
                         ps.sendData("1&" + mHostname + "&" + data + ";" + process);
                     } else if(cmd[0].equals(RQST)) {
@@ -127,61 +128,11 @@ class Task implements Runnable{
 }
 
 
-
-///**
-// * 
-// *
-// * @author Yannic Schneider
-// */
-//class AliveTask implements Runnable{
-//    
-//    private TCPSocket       socket;
-//    private ParallelServer  ps;
-//    private String          nick;
-//
-//    /**
-//     * Constructor
-//     *
-//     * @param socket    the socket from the client
-//     * @param ps        the Server-instance
-//     */
-//    public AliveTask(TCPSocket socket, ParallelServer ps){
-//        this.socket  = socket;
-//        this.ps      = ps;
-//    }
-//
-//    /**
-//     * send Alive signal all x seconds
-//     *
-//     */
-//    public void run(){
-//        try{
-//            System.out.println("[*] connected AliveTask");
-//
-//            for(int i = 0; i < 10; i++){
-//            	socket.sendLine("ALIVE: " + i );
-//            	Thread.sleep(1000);
-//            }
-//           
-//        } catch(Exception e) {
-//            System.out.println(e);
-//        }
-//
-//        try{
-//            socket.close();
-//        } catch (IOException e) {
-//            System.out.println(e);
-//        }
-//    }
-//}
-
-
-
 /**
  * This class is for monitoring the thread-pool and waiting for incoming
  * connections.
  *
- * @author Yannic Schneider
+ * @author CiB
  */
 public class ParallelServer {
 
@@ -203,9 +154,10 @@ public class ParallelServer {
     public static void main(String[] args){
     	GUI.mainGUI();
     	try {
-			Thread.sleep(500); // So the GUI has time to initialize (If not done the first output goes to the console not the GUI)
+			Thread.sleep(500); 
+			// So the GUI has time to initialize 
+			// (If not done the first output goes to the console not the GUI)
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         new ParallelServer().execute();
@@ -218,7 +170,6 @@ public class ParallelServer {
      * @param message   
      */
     public void newMessage(String message){
-        //clientNames.add(message.split(">")[0].substring(1));
         for(int i = 0; i < clients.size(); i++){
             Task t = clients.get(i);
             t.sendMessage(message);
@@ -276,22 +227,6 @@ public class ParallelServer {
     public void removeHost(String hostname){
         clientNames.remove(hostname);
     }
-//
-//    /**
-//     * returns all Clientnames of the clients which are connected to the server
-//     * at the moment
-//     *
-//     * @return      a String with all clientnames separeted by '&'
-//     */
-//    public String getClientNames(){
-//        String allClients = "&cmd&clientList&";
-//
-//        for(String s : clientNames){
-//            allClients += "&" + s;
-//        }
-//
-//        return allClients;
-//    }
 
 
     /**
@@ -315,8 +250,6 @@ public class ParallelServer {
 
         while(true){
             try{
-            	
-//            	SystemData.printUsage();
             	SystemData.info();
                 // wait for connection then create streams
                 System.out.println("[*] DEBUG: Wait for new connection");
@@ -325,9 +258,7 @@ public class ParallelServer {
                 pool.execute(task);
                 clients.add(task);
                 task.sendMessage("0&DEBUGINFO: &# welcome");
-                Thread.sleep(50);
-//                this.newMessage(this.getClientNames());
-                        
+                Thread.sleep(50);                        
 
             }catch(Exception e){
                 System.out.println(e);

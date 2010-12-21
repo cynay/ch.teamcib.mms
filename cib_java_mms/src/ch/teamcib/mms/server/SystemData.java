@@ -1,23 +1,22 @@
 package ch.teamcib.mms.server;
 
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
-import java.lang.management.ManagementFactory;
-import java.lang.management.OperatingSystemMXBean;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-
-import javax.management.MBeanServerConnection;
 
 import oshi.*;
 import oshi.hardware.HardwareAbstractionLayer;
-import oshi.hardware.Processor;
 import oshi.software.os.OperatingSystem;
 import oshi.util.FormatUtil;
 
+/**
+ * SystemData reads out system information from the underlying system. It reads
+ * the used/total amount of memory available, and also if the calc.exe process
+ * is running or not.
+ *
+ * @author CiB
+ */
 public class SystemData {
 	public SystemData() { 
 		boolean result = SystemData.isRunning("calc.exe");
@@ -25,6 +24,13 @@ public class SystemData {
 		System.out.println("Is Calculator running ?  " + (result ? " Yes" : "No"));
 	}
 
+	/**
+	 * method creates a vbs script file for listing all running processes and
+	 * then search for the given process name.
+	 * 
+	 * @param process	the process name to check if it is running
+	 * @return	true if the process is running otherwise false
+	 */
 	public static boolean isRunning(String process) {
 		boolean found = false;
 		try {
@@ -64,6 +70,11 @@ public class SystemData {
 		return found;
 	}
 
+	/**
+	 * method for reading the memory informations
+	 * 
+	 * @return a String with the used/total memory in the format: [used]/[total]
+	 */
 	public static String getMemInfo(){
 		SystemInfo si = new SystemInfo();
 		HardwareAbstractionLayer hal = si.getHardware();
