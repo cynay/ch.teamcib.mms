@@ -42,9 +42,9 @@ public class Overview extends Activity {
     // ===========================================================
     protected ListView mSrvList;
     protected ArrayList<Server> mServers = new ArrayList<Server>();
-	
+    
 	private INetworkService mNetworkService;
-	private Handler mHandler = new Handler();
+//	private Handler mHandler = new Handler();
 	private TextView mTimer;
 
 
@@ -81,10 +81,8 @@ public class Overview extends Activity {
         	}
         });
 
-        initListView();
-		
+        initListView();		
         new UpdateTimerTask().execute((Void)null);
-
 	}
 	
 	
@@ -110,8 +108,7 @@ public class Overview extends Activity {
 				mServers.add(new Server(servers[i],"~"));
 		}
 		
-		refreshFavListItems();
-		
+		refreshFavListItems();		
 	}
 	
 	@Override
@@ -151,19 +148,15 @@ public class Overview extends Activity {
 				String data = mNetworkService.getData();
 				Log.i("-> OVERVIEW", data );
 
-//				DataHelper dh = new DataHelper(c);
-
 				String servers[] = data.split("&");
-
 				mServers.clear();
-
 				
 				/* refresh items for the list the listview  */
 				for (int i = 0; i < servers.length; i++){
 					if(servers[i] != null){
 						String svr[] = servers[i].split(";");
 						if(!svr[1].equalsIgnoreCase("offline")){
-							String kv[] = svr[1].split("=");
+//							String kv[] = svr[1].split("=");
 							//	dh.InsertIntoTable(svr[0], kv[0], kv[1]);
 							mServers.add(new Server(svr[0], "online"));
 						} else {
@@ -172,11 +165,8 @@ public class Overview extends Activity {
 						} 
 					}
 				}
-
 				refreshFavListItems();
-
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
 			
@@ -185,7 +175,6 @@ public class Overview extends Activity {
 		
 		@Override
 		protected Void doInBackground(Void... params) {
-			// TODO Auto-generated method stub
 			try {
 				mNetworkService = NetworkServiceClient.getService();
 				mNetworkService.setServers(SPManager.getServers(c));
@@ -196,14 +185,12 @@ public class Overview extends Activity {
 				}
 
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				Log.e("-> ERROR OVERVIEW", e.getMessage());
 			} 
 			return null;
 		}
 	}
 	
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
@@ -263,7 +250,6 @@ public class Overview extends Activity {
 				mTimerMillis = mNetworkService.getTimerMillis();
 
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -296,8 +282,6 @@ public class Overview extends Activity {
 		}
 	}
 
-
-	// NEW
 	private void refreshFavListItems() {
 		mSrvList.setAdapter(new ArrayAdapter<Server>(this, 
 				android.R.layout.simple_list_item_1, mServers));
