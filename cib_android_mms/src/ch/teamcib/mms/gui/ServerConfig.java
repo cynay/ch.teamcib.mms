@@ -9,8 +9,7 @@ import android.widget.Toast;
 import ch.teamcib.mms.*;
 
 /**
- * 
- * 
+ * This Activity is for adding or editing Servers.  
  * 
  * @author CiB
  *

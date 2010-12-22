@@ -10,6 +10,12 @@ import android.util.Log;
 import android.webkit.WebView;
 import ch.teamcib.mms.*;
 
+/**
+ * ShowHelp is used for displaying a html-help site in an WebView.
+ * 
+ * @author CiB
+ *
+ */
 public class ShowHelp extends Activity{
 
 	@Override

@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.RemoteException;
 import android.util.Log;
 import android.view.Menu;
@@ -27,6 +26,9 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
 /**
+ * This is the main View of the application. It is also the entry point of 
+ * the programm. 
+ * 
  * @author CiB
  */
 public class Overview extends Activity {
@@ -44,7 +46,6 @@ public class Overview extends Activity {
     protected ArrayList<Server> mServers = new ArrayList<Server>();
     
 	private INetworkService mNetworkService;
-//	private Handler mHandler = new Handler();
 	private TextView mTimer;
 
 
@@ -377,15 +378,11 @@ public class Overview extends Activity {
 		
 		/**
 		 * Returns the name of the Server
+		 * 
 		 * @return name of the Server 
 		 */
 		public String getName(){
 			return name;
 		}
-
-
-//		public boolean equals(Object o) {
-//			return o instanceof Server && ((Server) o).name.compareTo(name) == 0;
-//		}
 	}
 }

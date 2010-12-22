@@ -31,6 +31,9 @@ implements OnSharedPreferenceChangeListener {
 	public static final String KEY_CKB_STATUS = "ckb_status";
 	public static final String KEY_EDT_TIMER = "edt_timer";
 
+	// ===========================================================
+    // Members
+    // ===========================================================
 	private CheckBoxPreference mServiceStatus;
 	private EditTextPreference mRefreshRate;
 	private INetworkService mNetworkService;
@@ -101,7 +104,6 @@ implements OnSharedPreferenceChangeListener {
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 			String key) {
-		// TODO Auto-generated method stub
 		String toastMsg = "";
 
 		if (key.equals(KEY_CKB_STATUS)) {
@@ -135,20 +137,9 @@ implements OnSharedPreferenceChangeListener {
 			mNetworkService.startService();
 //			Toast.makeText(this, mNetworkService.getData(), Toast.LENGTH_SHORT).show();
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			Log.i("-> PREFERENCES", "startService() Execption");
 			e.printStackTrace();
 		}
-//		if (mStarted) {
-//			Toast.makeText(Preferences.this, "Service already started", 
-//					Toast.LENGTH_SHORT).show();
-//		} else {
-//			Intent i = new Intent();
-//			i.setClassName("ch.teamcib.mms.service", 
-//					"ch.teamcib.mms.service.NetworkServiceImpl");
-//			startService(i);
-//			mStarted = true;
-//		}
 	}
 	
 	private void stopService(){
@@ -157,19 +148,10 @@ implements OnSharedPreferenceChangeListener {
 			mNetworkService.stopService();
 //			Toast.makeText(this, mNetworkService.getData(), Toast.LENGTH_SHORT).show();
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
+			Log.i("-> PREFERENCES", "stopService() Execption");
 			e.printStackTrace();
 		}
-//		if (!mStarted) {
-//			Toast.makeText(Preferences.this, "Service not yet started", 
-//					Toast.LENGTH_SHORT).show();
-//		} else {
-//			Intent i = new Intent();
-//			i.setClassName("ch.teamcib.mms.service", 
-//					"ch.teamcib.mms.service.NetworkServiceImpl");
-//			stopService(i);
-//			mStarted = false;
-//		}
+
 	}
 	
 
